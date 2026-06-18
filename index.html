@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>武夷岩茶 · 制作技艺</title>
+    <style>
+        :root {
+            --bg-warm: #f7f2e8;
+            --bg-paper: #faf6ee;
+            --text-dark: #1a1a1a;
+            --accent-gold: #b8966a;
+            --accent-ink: #1a1a1a;
+            --border-ornament: #c4a882;
+            --white-stroke: 0 0 3px rgba(255,255,255,0.7), 0 0 6px rgba(255,255,245,0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #e8e0d3;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+            font-family: "Noto Serif SC", "STSong", "Songti SC", "华文宋体", "宋体", serif;
+            touch-action: manipulation; -webkit-user-select: none; user-select: none;
+        }
+        .scene {
+            position: relative; width: calc(100vh * 9 / 16); height: 100vh;
+            max-width: 100vw; max-height: calc(100vw * 16 / 9);
+            overflow: hidden; background: #d9cfb0;
+            box-shadow: 0 0 0 2px var(--border-ornament), 0 0 0 6px #f5efe2, 0 0 0 8px var(--border-ornament), 0 20px 60px rgba(0,0,0,0.25);
+            border-radius: 2px;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; pointer-events: none; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+        }
+        .page.active { opacity: 1; pointer-events: auto; }
+        .bg-full {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            z-index: 1;
+        }
+        .paper-texture {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+            pointer-events: none; opacity: 0.35;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,160,130,0.03) 2px, rgba(180,160,130,0.03) 4px),
+            repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(170,150,120,0.02) 1px, rgba(170,150,120,0.02) 2px);
+        }
+        .corner-ornament { position: absolute; z-index: 15; pointer-events: none; width: 30px; height: 30px; opacity: 0.5; }
+        .corner-ornament::before, .corner-ornament::after { content: ''; position: absolute; background: var(--border-ornament); }
+        .corner-tl { top: 12px; left: 14px; }
+        .corner-tr { top: 12px; right: 14px; }
+        .corner-bl { bottom: 12px; left: 14px; }
+        .corner-br { bottom: 12px; right: 14px; }
+        .corner-tl::before, .corner-bl::before { width: 18px; height: 1px; top: 0; left: 0; }
+        .corner-tl::after, .corner-bl::after { width: 1px; height: 18px; top: 0; left: 0; }
+        .corner-tr::before, .corner-br::before { width: 18px; height: 1px; top: 0; right: 0; }
+        .corner-tr::after, .corner-br::after { width: 1px; height: 18px; top: 0; right: 0; }
+
+        .fog-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(250,245,235,0.85) 0%, rgba(235,225,205,0.95) 100%);
+            backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none; z-index: 30; transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .title-v {
+            position: absolute; z-index: 5; writing-mode: vertical-rl; text-orientation: mixed;
+            color: var(--text-dark); font-size: 2rem; letter-spacing: 0.28em; font-weight: 600;
+            pointer-events: none;
+            text-shadow: var(--white-stroke);
+        }
+        .title-v .sub { font-size: 0.65em; letter-spacing: 0.35em; opacity: 0.75; margin-top: 0.3em; }
+
+        .info-box {
+            position: absolute; z-index: 5; color: var(--text-dark); font-size: 1.35rem;
+            letter-spacing: 0.07em; line-height: 2; pointer-events: none; opacity: 0;
+            transition: opacity 1.2s ease; text-align: left; left: 10%; right: 10%;
+            text-shadow: var(--white-stroke);
+        }
+        .info-box.show { opacity: 1; }
+        .info-box strong {
+            display: block; font-size: 1.3em; color: var(--accent-ink);
+            letter-spacing: 0.2em; margin-bottom: 0.3em; font-weight: 700;
+            border-left: 3px solid var(--accent-gold); padding-left: 0.6em;
+            text-shadow: var(--white-stroke);
+        }
+
+        .hint-top {
+            position: absolute; top: 12%; left: 10%; right: 10%; z-index: 6;
+            color: var(--text-dark); font-size: 1.25rem; letter-spacing: 0.1em;
+            pointer-events: none; opacity: 1; transition: opacity 0.6s; text-align: left;
+            text-shadow: var(--white-stroke);
+        }
+        .hint-top::before { content: '◆'; margin-right: 0.5em; font-size: 0.6em; color: var(--accent-gold); vertical-align: middle; text-shadow: none; }
+
+        .cup-zone {
+            position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
+            width: 24%; height: 22%; z-index: 6; cursor: pointer; background: transparent; border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .cup-zone:active { transform: translateX(-50%) scale(0.92); }
+
+        .bottom-line {
+            position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%);
+            width: 35%; height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+            z-index: 4; pointer-events: none; opacity: 0.6;
+        }
+
+        .tea-leaf {
+            position: absolute; cursor: pointer; pointer-events: auto;
+            transition: opacity 0.45s ease; z-index: 4;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)) drop-shadow(0 0 4px rgba(255,255,255,0.8));
+        }
+        @keyframes shakePick {
+            0% { transform: translate(0,0) rotate(var(--r)); }
+            25% { transform: translate(-4px,2px) rotate(calc(var(--r) - 3deg)); }
+            50% { transform: translate(4px,-2px) rotate(calc(var(--r) + 3deg)); }
+            75% { transform: translate(-2px,1px) rotate(calc(var(--r) - 1.5deg)); }
+            100% { transform: translate(0,0) rotate(var(--r)); opacity: 0; }
+        }
+        .shake-it { animation: shakePick 0.5s ease forwards; }
+
+        .slide-zone { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; z-index: 5; cursor: grab; background: transparent; }
+        .slide-zone:active { cursor: grabbing; }
+
+        .dots { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 6; pointer-events: none; }
+        .dot { width: 9px; height: 9px; background: #d4c4a8; border-radius: 50%; transition: all 0.4s ease; }
+        .dot.fill { background: #8b6f4e; }
+
+        .shake-leaf-wrap { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 75%; z-index: 3; pointer-events: auto; }
+        .shake-leaf-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        .pan-zone { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); width: 55%; height: 40%; z-index: 5; cursor: pointer; background: transparent; }
+        .steam-fog {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            width: 65%; height: 35%;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.55) 0%, rgba(255,240,220,0.2) 40%, transparent 70%);
+            filter: blur(14px); opacity: 0; transition: opacity 1s ease; z-index: 2; pointer-events: none;
+        }
+        .steam-fog.active { opacity: 1; }
+
+        .circle-hint { position: absolute; top: 68%; left: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: opacity 0.6s; }
+        .circle-dashed { width: 80px; height: 80px; border: 2px dashed #8b7b62; border-radius: 50%; opacity: 0.7; }
+        .circle-text { font-size: 0.9rem; color: var(--text-dark); letter-spacing: 0.06em; text-shadow: var(--white-stroke); }
+        .progress-dots { display: flex; gap: 6px; margin-top: 4px; }
+        .progress-dots .dot { width: 8px; height: 8px; background: #cbb295; border-radius: 50%; transition: background 0.3s; }
+        .progress-dots .dot.filled { background: #7a5c3e; }
+
+        .knead-zone { position: absolute; bottom: 20%; left: 50%; transform: translate(-50%, 0); width: 55%; height: 35%; z-index: 6; cursor: pointer; background: transparent; border-radius: 50%; }
+
+        .draggable { position: absolute; z-index: 10; cursor: grab; user-select: none; pointer-events: auto; }
+        .draggable:active { cursor: grabbing; }
+
+        @media (max-width: 600px) {
+            .title-v { font-size: 1.4rem; }
+            .info-box { font-size: 1rem; }
+            .hint-top { font-size: 0.9rem; }
+        }
+
+        /* 泡茶页背景及元素 */
+        .tea-bg-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            transition: opacity 0.6s;
+        }
+        .bg-81 { background-image: url('W:/批发市场/网页/tea/81.png'); z-index: 1; }
+        .bg-90 { background-image: url('W:/批发市场/网页/tea/90.png'); opacity: 0; z-index: 2; }
+        .bg-91 { background-image: url('W:/批发市场/网页/tea/91.png'); opacity: 0; z-index: 3; }
+        .bg-81jpg { background-image: url('W:/批发市场/网页/tea/81.jpg'); opacity: 0; z-index: 4; }
+
+        .tea-draggable {
+            position: absolute; z-index: 10; cursor: grab; user-select: none; pointer-events: auto;
+            transition: transform 0.1s ease;
+        }
+        .tea-draggable:active { cursor: grabbing; }
+
+        .outline-hint { filter: drop-shadow(0 0 0 2px white); }
+
+        #gongdao { left: 6%; top: 40%; width: 28%; }
+        #gaiwan { left: 36%; top: 38%; width: 24%; }
+        #kettle { left: 66%; top: 40%; width: 28%; }
+        #chaze { left: 50%; top: 56%; width: 32%; }
+        #gaiwanImg { width: 100%; }
+
+        /* 泡茶页文字容器 */
+        .tea-text-area {
+            position: absolute; top: 6%; left: 50%; transform: translateX(-50%);
+            z-index: 15; text-align: center; pointer-events: none; width: 85%;
+        }
+        .tea-text-area .hint-top {
+            position: static; margin-bottom: 10px;
+        }
+        .tea-text-area .info-box {
+            position: static; text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="scene" id="mainScene">
+    <div class="paper-texture"></div>
+    <div class="corner-ornament corner-tl"></div>
+    <div class="corner-ornament corner-tr"></div>
+    <div class="corner-ornament corner-bl"></div>
+    <div class="corner-ornament corner-br"></div>
+    <div class="fog-overlay" id="globalFog"></div>
+
+    <!-- 导入页 -->
+    <div class="page active" id="page0">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/11.png');"></div>
+        <div class="title-v" style="top:14%; left:50%; transform:translateX(-50%);">武夷岩茶<span class="sub">制作技艺</span></div>
+        <div class="bottom-line"></div>
+        <div class="cup-zone" id="cupZone"></div>
+    </div>
+
+    <!-- 采摘页 -->
+    <div class="page" id="page1">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/21.png');"></div>
+        <img src="W:/批发市场/网页/tea/22.png" class="tea-leaf" style="top:70%; left:10%; --r:-32deg; transform:rotate(-32deg); width:14%;">
+        <img src="W:/批发市场/网页/tea/22.png" class="tea-leaf" style="top:66%; left:28%; --r:-12deg; transform:rotate(-12deg); width:14%;">
+        <img src="W:/批发市场/网页/tea/22.png" class="tea-leaf" style="top:60%; left:44%; --r:0deg; transform:rotate(0deg); width:14%;">
+        <img src="W:/批发市场/网页/tea/22.png" class="tea-leaf" style="top:68%; left:56%; --r:14deg; transform:rotate(14deg); width:14%;">
+        <img src="W:/批发市场/网页/tea/22.png" class="tea-leaf" style="top:64%; left:74%; --r:28deg; transform:rotate(28deg); width:14%;">
+        <div class="hint-top" id="hint1">轻触芽叶采摘</div>
+        <div class="info-box" id="info1" style="top:18%;"><strong>采摘</strong>采取伸育成熟，开叶三四面的新梢茶叶，一般掌握中开面采为宜。</div>
+    </div>
+
+    <!-- 萎凋页 -->
+    <div class="page" id="page2">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/32.png'); z-index:1;"></div>
+        <div class="bg-full" id="wiltBefore" style="background-image:url('W:/批发市场/网页/tea/31.png'); z-index:2;"></div>
+        <div class="slide-zone" id="slideZone"></div>
+        <div class="hint-top" id="hint2">轻划翻动茶叶，散失水分</div>
+        <div class="info-box" id="info2" style="top:10%; font-size:1.2rem; line-height:1.7;"><strong>萎凋</strong>将茶青均摊于水筛中，摊好后排置于竹制萎凋棚上，经日晒后叶片渐成萎凋状，蒸发15%的水分为宜。</div>
+        <div class="dots" id="wiltDots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+
+    <!-- 做青页 -->
+    <div class="page" id="page3">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/41.jpg');"></div>
+        <div class="shake-leaf-wrap" id="shakeContainer"><img src="W:/批发市场/网页/tea/42.png" class="shake-leaf-img" id="shakeLeaf"></div>
+        <div class="hint-top" id="hint3" style="top:12%; color: var(--text-dark); text-shadow: var(--white-stroke);">摇晃手机或拖拽茶叶</div>
+        <div class="info-box" id="info3" style="top:6%; color: var(--text-dark); text-shadow: var(--white-stroke);"><strong>做青</strong>通过反复的摇青和静置发酵，促进青叶变化，形成"绿叶红镶边"的独特风格。</div>
+    </div>
+
+    <!-- 炒青页 (提示文字已独立，始终可见) -->
+    <div class="page" id="page4">
+        <div class="bg-full layer-hot" style="background-image:url('W:/批发市场/网页/tea/52.png'); z-index:1;"></div>
+        <div class="bg-full layer-cold" id="coldLayer" style="background-image:url('W:/批发市场/网页/tea/51.png'); z-index:2;"></div>
+        <img src="W:/批发市场/网页/tea/53.png" alt="茶叶" class="draggable" id="teaLeaf" style="right:-15%; bottom:2%; width:60%;">
+        <div class="pan-zone" id="pressZone" style="display:none;"></div>
+        <!-- 独立的提示文字 -->
+        <div class="hint-top" id="hint4" style="top:10%;">拖动茶叶至中央</div>
+        <!-- 介绍文字（初始隐藏） -->
+        <div class="info-box" id="info4" style="top:14%;">
+            <strong>炒青</strong>利用高温火力破坏酶的活性，中止发酵，稳定做青已形成的品质并纯化香气。
+        </div>
+    </div>
+
+    <!-- 揉捻页 -->
+    <div class="page" id="page5">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/62.png'); z-index:1;"></div>
+        <div class="bg-full" id="kneadBefore" style="background-image:url('W:/批发市场/网页/tea/61.png'); z-index:2;"></div>
+        <div class="circle-hint" id="circleHint"><div class="circle-dashed"></div><div class="circle-text">画圈揉捻</div><div class="progress-dots" id="kneadDots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+        <div class="knead-zone" id="kneadZone"></div>
+        <div class="hint-top" id="hint5" style="top:15%;">以指画圆，反复揉捻</div>
+        <div class="info-box" id="info5" style="top:13%;"><strong>揉捻</strong>揉捻使叶细胞破碎，茶汁溢出，条索紧结成形。</div>
+    </div>
+
+    <!-- 炭焙页 -->
+    <div class="page" id="page6">
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/71.jpg'); z-index:1;" id="bg71"></div>
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/73.jpg'); z-index:2; opacity:0;" id="bg73"></div>
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/74.png'); z-index:3; opacity:0;" id="bg74"></div>
+        <div class="bg-full" style="background-image:url('W:/批发市场/网页/tea/76.png'); z-index:4; opacity:0;" id="bg76"></div>
+        <img src="W:/批发市场/网页/tea/72.jpg" alt="焙笼" class="draggable" id="cageImg" style="right:5%; bottom:8%; width:25%;">
+        <img src="W:/批发市场/网页/tea/75.jpg" alt="茶叶" class="draggable" id="leafImg2" style="right:5%; bottom:8%; width:20%; display:none;">
+        <div class="click-zone" id="clickZone" style="position:absolute; left:35%; top:55%; width:30%; height:25%; z-index:20; cursor:pointer; background:transparent; display:none; border-radius:50%;"></div>
+        <div class="hint-top" id="hint6" style="top:15%;">拖动焙笼至中央</div>
+        <div class="info-box" id="info6" style="top:13%;"><strong>炭焙</strong>通过炭火的穿透性加热，让茶叶进行转化，形成品质优异并稳定的好茶。</div>
+    </div>
+
+    <!-- 泡茶页 -->
+    <div class="page" id="page7">
+        <div class="tea-bg-img bg-81" id="bg81"></div>
+        <div class="tea-bg-img bg-90" id="bg90"></div>
+        <div class="tea-bg-img bg-91" id="bg91"></div>
+        <div class="tea-bg-img bg-81jpg" id="bg81jpg"></div>
+        <img src="W:/批发市场/网页/tea/82.png" alt="公道杯" class="tea-draggable" id="gongdao">
+        <div class="tea-draggable" id="gaiwan"><img src="W:/批发市场/网页/tea/84.png" alt="盖碗" id="gaiwanImg"></div>
+        <img src="W:/批发市场/网页/tea/83.png" alt="烧水壶" class="tea-draggable" id="kettle">
+        <img src="W:/批发市场/网页/tea/85.png" alt="茶则" class="tea-draggable" id="chaze">
+        <div class="tea-text-area">
+            <div class="hint-top" id="guideText7">点击盖碗，打开盖子</div>
+            <div class="info-box" id="infoText7"><strong>品茶</strong>武夷岩茶香气馥郁，胜似兰花而深沉持久，滋味醇厚甘爽，回甘快捷持久，岩韵显。</div>
+        </div>
+        <div class="fog-overlay" id="fogLayer7"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const pickSound = new Audio('W:/批发市场/网页/tea/1.mp3');
+    pickSound.preload = 'auto';
+    const shakeSound = new Audio('W:/批发市场/网页/tea/2.mp3');
+    shakeSound.loop = true;
+    shakeSound.preload = 'auto';
+    let shakeAudioPlaying = false;
+    let shakeTargetVolume = 0;
+    let shakeCurrentVolume = 0;
+
+    function stopShakeSound(immediate = false) {
+        if (immediate) {
+            shakeSound.pause();
+            shakeSound.volume = 0;
+            shakeAudioPlaying = false;
+            shakeCurrentVolume = 0;
+            shakeTargetVolume = 0;
+        } else {
+            shakeTargetVolume = 0;
+        }
+    }
+
+    const pages = document.querySelectorAll('.page');
+    const globalFog = document.getElementById('globalFog');
+    let currentPage = 0;
+
+    function goToPage(index) {
+        if (index === currentPage || index >= pages.length || index < 0) return;
+        stopShakeSound(true);
+        globalFog.style.opacity = '1';
+        setTimeout(() => {
+            pages[currentPage].classList.remove('active');
+            pages[index].classList.add('active');
+            currentPage = index;
+            globalFog.style.opacity = '0';
+            if (index === 1) initPick();
+            else if (index === 2) initWilt();
+            else if (index === 3) initShake();
+            else if (index === 4) initPan();
+            else if (index === 5) initKnead();
+            else if (index === 6) initBake();
+            else if (index === 7) initTea();
+        }, 900);
+    }
+
+    document.getElementById('cupZone').addEventListener('click', () => goToPage(1));
+    document.getElementById('cupZone').addEventListener('touchend', e => { e.preventDefault(); goToPage(1); });
+
+    // 采摘页
+    function initPick() {
+        const leaves = document.querySelectorAll('#page1 .tea-leaf');
+        const hint1 = document.getElementById('hint1');
+        const info1 = document.getElementById('info1');
+        let picked = 0;
+        leaves.forEach(leaf => {
+            if (leaf.dataset.bound) return;
+            leaf.dataset.bound = '1';
+            leaf.addEventListener('click', function() {
+                if (this.classList.contains('picked')) return;
+                this.classList.add('picked', 'shake-it');
+                pickSound.currentTime = 0;
+                pickSound.play().catch(() => {});
+                const self = this;
+                const onAnimEnd = () => {
+                    self.style.opacity = '0';
+                    self.style.pointerEvents = 'none';
+                    self.removeEventListener('animationend', onAnimEnd);
+                    picked++;
+                    if (picked === leaves.length) {
+                        hint1.style.opacity = '0';
+                        info1.classList.add('show');
+                        setTimeout(() => goToPage(2), 2800);
+                    }
+                };
+                this.addEventListener('animationend', onAnimEnd);
+            });
+            leaf.addEventListener('touchend', e => { e.preventDefault(); leaf.click(); });
+        });
+    }
+
+    // 萎凋页
+    function initWilt() {
+        if (document.getElementById('wiltBefore').dataset.init) return;
+        document.getElementById('wiltBefore').dataset.init = '1';
+        const before = document.getElementById('wiltBefore');
+        const hint2 = document.getElementById('hint2');
+        const info2 = document.getElementById('info2');
+        const dots = document.querySelectorAll('#wiltDots .dot');
+        const zone = document.getElementById('slideZone');
+        const TOTAL = 2500, STEP = TOTAL/5;
+        let dist = 0, done = false, dragging = false, lx = 0, ly = 0;
+        function upd() {
+            if (done) return;
+            const p = Math.min(dist/TOTAL, 1);
+            before.style.opacity = (1-p).toFixed(2);
+            const f = Math.floor(dist/STEP);
+            dots.forEach((d,i) => d.classList.toggle('fill', i<f));
+            if (dist >= TOTAL && !done) {
+                done = true;
+                hint2.style.opacity = '0';
+                info2.classList.add('show');
+                setTimeout(() => goToPage(3), 2800);
+            }
+        }
+        zone.addEventListener('mousedown', e => { if(done) return; dragging=true; lx=e.clientX; ly=e.clientY; e.preventDefault(); });
+        window.addEventListener('mousemove', e => { if(!dragging||done) return; const d = Math.hypot(e.clientX-lx, e.clientY-ly); dist = Math.min(dist+d, TOTAL); lx=e.clientX; ly=e.clientY; upd(); });
+        window.addEventListener('mouseup', () => { dragging=false; });
+        zone.addEventListener('touchstart', e => { if(done) return; dragging=true; const t=e.touches[0]; lx=t.clientX; ly=t.clientY; e.preventDefault(); }, {passive:false});
+        window.addEventListener('touchmove', e => { if(!dragging||done) return; e.preventDefault(); const t=e.touches[0]; const d = Math.hypot(t.clientX-lx, t.clientY-ly); dist = Math.min(dist+d, TOTAL); lx=t.clientX; ly=t.clientY; upd(); }, {passive:false});
+        window.addEventListener('touchend', () => { dragging=false; });
+    }
+
+    // 做青页
+    function initShake() {
+        if (document.getElementById('shakeContainer').dataset.init) return;
+        document.getElementById('shakeContainer').dataset.init = '1';
+        const cont = document.getElementById('shakeContainer');
+        const leaf = document.getElementById('shakeLeaf');
+        const hint3 = document.getElementById('hint3');
+        const info3 = document.getElementById('info3');
+        const MAX = 15, DIST_GOAL = 1500;
+        let ox = 0, oy = 0, dragging = false, sx = 0, sy = 0, bx = 0, by = 0;
+        let totalDist = 0, lastOx = 0, lastOy = 0, done = false, gyro = false;
+        window.addEventListener('deviceorientation', e => {
+            if (done) return;
+            if (e.beta!=null && e.gamma!=null) {
+                gyro = true;
+                const g = Math.max(-30,Math.min(30,e.gamma))/30;
+                const b = Math.max(-30,Math.min(30,e.beta))/30;
+                if (!dragging) { ox = g*MAX; oy = b*MAX; }
+            }
+        });
+        function ds(e) { if(done) return; dragging=true; const p=e.touches?e.touches[0]:e; sx=p.clientX; sy=p.clientY; bx=ox; by=oy; e.preventDefault(); }
+        function dm(e) { if(!dragging||done) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; const dx=p.clientX-sx, dy=p.clientY-sy; ox=Math.min(MAX,Math.max(-MAX,bx+dx)); oy=Math.min(MAX,Math.max(-MAX,by+dy)); }
+        function de() { dragging=false; }
+        cont.addEventListener('mousedown', ds); window.addEventListener('mousemove', e => { if(dragging) dm(e); }); window.addEventListener('mouseup', de);
+        cont.addEventListener('touchstart', ds, {passive:false}); window.addEventListener('touchmove', e => { if(dragging) dm(e); }, {passive:false}); window.addEventListener('touchend', de);
+
+        function chk() {
+            if (done) return;
+            const dx = ox - lastOx, dy = oy - lastOy;
+            const moved = Math.sqrt(dx*dx+dy*dy);
+            totalDist += moved; lastOx = ox; lastOy = oy;
+            const isMoving = moved > 0.5 || dragging;
+            if (isMoving) { shakeTargetVolume = 1; if (!shakeAudioPlaying) { shakeSound.volume=0; shakeSound.play().then(()=>{shakeAudioPlaying=true;}).catch(()=>{}); } }
+            else { shakeTargetVolume = 0; }
+            if (totalDist >= DIST_GOAL && !done) {
+                done = true;
+                hint3.style.opacity = '0';
+                info3.classList.add('show');
+                stopShakeSound();
+                setTimeout(() => goToPage(4), 2800);
+            }
+        }
+        function loop() {
+            if (done) return;
+            chk();
+            if (!dragging && !gyro) { ox += (0-ox)*0.1; oy += (0-oy)*0.1; }
+            leaf.style.transform = `translate(${ox}px, ${oy}px)`;
+            if (shakeAudioPlaying) {
+                if (shakeTargetVolume===1 && shakeCurrentVolume<1) { shakeCurrentVolume=Math.min(1,shakeCurrentVolume+0.05); shakeSound.volume=shakeCurrentVolume; }
+                else if (shakeTargetVolume===0 && shakeCurrentVolume>0) { shakeCurrentVolume=Math.max(0,shakeCurrentVolume-0.02); shakeSound.volume=shakeCurrentVolume; if(shakeCurrentVolume<=0.01){shakeSound.pause();shakeAudioPlaying=false;shakeCurrentVolume=0;} }
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    }
+
+    // 炒青页 (修复提示文字显示逻辑)
+    function initPan() {
+        if (document.getElementById('coldLayer').dataset.init) return;
+        document.getElementById('coldLayer').dataset.init = '1';
+        const coldLayer = document.getElementById('coldLayer');
+        const teaLeaf = document.getElementById('teaLeaf');
+        const pressZone = document.getElementById('pressZone');
+        const hint4 = document.getElementById('hint4');
+        const info4 = document.getElementById('info4');
+        const scene = document.getElementById('mainScene');
+
+        let state = 'drag';
+        let leafPlaced = false;
+        let isDragging = false, dragStartX, dragStartY, startLeftPct, startTopPct;
+
+        function resetLeaf() {
+            teaLeaf.style.left = 'auto'; teaLeaf.style.top = 'auto';
+            teaLeaf.style.right = '-15%'; teaLeaf.style.bottom = '2%';
+            teaLeaf.style.width = '60%';
+            teaLeaf.style.transform = 'none';
+        }
+        function getTarget() {
+            const r = scene.getBoundingClientRect();
+            return { x: r.width/2, y: r.height*0.56, rad: Math.min(r.width,r.height)*0.18 };
+        }
+        function leafInTarget() {
+            const t = getTarget();
+            const lr = teaLeaf.getBoundingClientRect();
+            const sr = scene.getBoundingClientRect();
+            const cx = lr.left + lr.width/2 - sr.left;
+            const cy = lr.top + lr.height/2 - sr.top;
+            return Math.hypot(cx-t.x, cy-t.y) <= t.rad;
+        }
+
+        function onDragStart(e) {
+            if (state !== 'drag' || leafPlaced) return;
+            e.preventDefault();
+            isDragging = true;
+            const p = e.touches ? e.touches[0] : e;
+            dragStartX = p.clientX; dragStartY = p.clientY;
+            const sr = scene.getBoundingClientRect();
+            const lr = teaLeaf.getBoundingClientRect();
+            startLeftPct = ((lr.left - sr.left)/sr.width)*100;
+            startTopPct = ((lr.top - sr.top)/sr.height)*100;
+            teaLeaf.style.left = startLeftPct + '%';
+            teaLeaf.style.top = startTopPct + '%';
+            teaLeaf.style.right = 'auto'; teaLeaf.style.bottom = 'auto';
+            teaLeaf.style.cursor = 'grabbing';
+        }
+        function onDragMove(e) {
+            if (!isDragging || state !== 'drag' || leafPlaced) return;
+            e.preventDefault();
+            const p = e.touches ? e.touches[0] : e;
+            const sr = scene.getBoundingClientRect();
+            const dx = p.clientX - dragStartX, dy = p.clientY - dragStartY;
+            const newL = startLeftPct + (dx/sr.width)*100;
+            const newT = startTopPct + (dy/sr.height)*100;
+            teaLeaf.style.left = newL + '%';
+            teaLeaf.style.top = newT + '%';
+        }
+        function onDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            teaLeaf.style.cursor = 'grab';
+            if (leafInTarget()) {
+                leafPlaced = true;
+                const t = getTarget();
+                const sr = scene.getBoundingClientRect();
+                teaLeaf.style.left = (t.x / sr.width * 100) + '%';
+                teaLeaf.style.top = (t.y / sr.height * 100) + '%';
+                teaLeaf.style.width = '100%';
+                teaLeaf.style.transform = 'translate(-50%, -50%)';
+                teaLeaf.classList.add('placed');
+                state = 'press';
+                hint4.textContent = '长按铁锅，开始杀青';
+                pressZone.style.display = 'block';
+                teaLeaf.style.pointerEvents = 'none';
+                bindPress();
+            } else {
+                resetLeaf();
+            }
+        }
+
+        function bindPress() {
+            pressZone.addEventListener('mousedown', startPress);
+            pressZone.addEventListener('touchstart', startPress, { passive:false });
+            window.addEventListener('mouseup', endPress);
+            window.addEventListener('touchend', endPress);
+        }
+        const PRESS_DUR = 2000;
+        let pressTimer, pressStart, pressDone = false;
+        function startPress(e) {
+            if (state !== 'press' || pressDone) return;
+            e.preventDefault();
+            pressStart = Date.now();
+            pressTimer = setInterval(() => {
+                const elapsed = Date.now() - pressStart;
+                const progress = Math.min(elapsed/PRESS_DUR, 1);
+                coldLayer.style.opacity = (1 - progress).toFixed(2);
+                if (elapsed >= PRESS_DUR) {
+                    clearInterval(pressTimer);
+                    completePress();
+                }
+            }, 50);
+        }
+        function endPress() {
+            if (state === 'press' && !pressDone) { clearInterval(pressTimer); coldLayer.style.opacity = '1'; }
+        }
+        function completePress() {
+            pressDone = true;
+            coldLayer.style.opacity = '0';
+            pressZone.style.display = 'none';
+            state = 'shake';
+            hint4.textContent = '摇晃手机或拖拽茶叶';
+            teaLeaf.style.pointerEvents = 'auto';
+            teaLeaf.style.cursor = 'move';
+            initShakePan();
+        }
+
+        const SHAKE_DIST = 1200, MAX_MOVE_PAN = 12;
+        let offX = 0, offY = 0, totalDist = 0, lastOX = 0, lastOY = 0, shakeDone = false;
+        let isShakeDrag = false, shakeDragSX, shakeDragSY, shakeDragBX, shakeDragBY;
+        function initShakePan() {
+            window.addEventListener('deviceorientation', gyroPan);
+            teaLeaf.addEventListener('mousedown', onShakeDragStart);
+            teaLeaf.addEventListener('touchstart', onShakeDragStart, { passive:false });
+            window.addEventListener('mousemove', onShakeDragMove);
+            window.addEventListener('touchmove', onShakeDragMove, { passive:false });
+            window.addEventListener('mouseup', onShakeDragEnd);
+            window.addEventListener('touchend', onShakeDragEnd);
+            requestAnimationFrame(shakeLoop);
+        }
+        function gyroPan(e) {
+            if (shakeDone || isShakeDrag) return;
+            if (e.beta!=null && e.gamma!=null) {
+                const g = Math.max(-45,Math.min(45,e.gamma))/45;
+                const b = Math.max(-45,Math.min(45,e.beta))/45;
+                offX = g*MAX_MOVE_PAN; offY = b*MAX_MOVE_PAN;
+                updateLeaf();
+            }
+        }
+        function updateLeaf() { teaLeaf.style.transform = `translate(-50%, -50%) translate(${offX}px, ${offY}px)`; }
+        function onShakeDragStart(e) {
+            if (shakeDone) return;
+            e.preventDefault();
+            isShakeDrag = true;
+            const p = e.touches ? e.touches[0] : e;
+            shakeDragSX = p.clientX; shakeDragSY = p.clientY;
+            shakeDragBX = offX; shakeDragBY = offY;
+        }
+        function onShakeDragMove(e) {
+            if (!isShakeDrag || shakeDone) return;
+            e.preventDefault();
+            const p = e.touches ? e.touches[0] : e;
+            const dx = p.clientX - shakeDragSX, dy = p.clientY - shakeDragSY;
+            offX = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX + dx));
+            offY = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY + dy));
+            updateLeaf();
+        }
+        function onShakeDragEnd() { isShakeDrag = false; }
+        function shakeLoop() {
+            if (shakeDone) return;
+            const dx = offX - lastOX, dy = offY - lastOY;
+            const moved = Math.sqrt(dx*dx+dy*dy);
+            totalDist += moved;
+            lastOX = offX; lastOY = offY;
+            if (totalDist >= SHAKE_DIST) {
+                shakeDone = true;
+                hint4.style.opacity = '0';       // 隐藏提示文字
+                info4.classList.add('show');     // 显示介绍文字
+                teaLeaf.style.pointerEvents = 'none';
+                window.removeEventListener('deviceorientation', gyroPan);
+                setTimeout(() => goToPage(5), 2800);
+            } else {
+                requestAnimationFrame(shakeLoop);
+            }
+        }
+
+        teaLeaf.addEventListener('mousedown', onDragStart);
+        teaLeaf.addEventListener('touchstart', onDragStart, { passive:false });
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('touchmove', onDragMove, { passive:false });
+        window.addEventListener('mouseup', onDragEnd);
+        window.addEventListener('touchend', onDragEnd);
+        resetLeaf();
+    }
+
+    // 揉捻页
+    function initKnead() {
+        if (document.getElementById('kneadZone').dataset.init) return;
+        document.getElementById('kneadZone').dataset.init = '1';
+        const kneadZone = document.getElementById('kneadZone');
+        const beforeLayer = document.getElementById('kneadBefore');
+        const circleHint = document.getElementById('circleHint');
+        const hint5 = document.getElementById('hint5');
+        const info5 = document.getElementById('info5');
+        const dots = document.querySelectorAll('#kneadDots .dot');
+        const TOTAL_CIRCLES = 5;
+        let currentCircles = 0, isFinished = false;
+        let isDrawing = false, lastAngle = 0, angleAccum = 0, direction = 0, lastPoint = null;
+
+        function getCenter() { const r = kneadZone.getBoundingClientRect(); return { x: r.left+r.width/2, y: r.top+r.height/2 }; }
+        function getAngle(cx, cy) { const c = getCenter(); return Math.atan2(cy-c.y, cx-c.x); }
+        function resetCircle() { angleAccum=0; direction=0; lastPoint=null; }
+        function checkCircle() {
+            if (Math.abs(angleAccum) >= Math.PI*1.85 && direction !== 0) {
+                currentCircles++;
+                beforeLayer.style.opacity = (1 - currentCircles/TOTAL_CIRCLES).toFixed(2);
+                dots.forEach((d,i) => d.classList.toggle('filled', i < currentCircles));
+                resetCircle();
+                if (currentCircles >= TOTAL_CIRCLES) finish();
+            }
+        }
+        function finish() {
+            isFinished = true;
+            circleHint.style.opacity = '0';
+            hint5.style.opacity = '0';
+            info5.classList.add('show');
+            kneadZone.style.pointerEvents = 'none';
+            setTimeout(() => goToPage(6), 2800);
+        }
+
+        function onDown(e) {
+            if (isFinished) return;
+            e.preventDefault();
+            isDrawing = true;
+            const p = e.touches ? e.touches[0] : e;
+            lastPoint = { x: p.clientX, y: p.clientY };
+            lastAngle = getAngle(p.clientX, p.clientY);
+            angleAccum=0; direction=0;
+        }
+        function onMove(e) {
+            if (!isDrawing || isFinished) return;
+            e.preventDefault();
+            const p = e.touches ? e.touches[0] : e;
+            const angle = getAngle(p.clientX, p.clientY);
+            let delta = angle - lastAngle;
+            if (delta > Math.PI) delta -= 2*Math.PI;
+            if (delta < -Math.PI) delta += 2*Math.PI;
+            if (Math.abs(delta) < 0.05) return;
+            if (direction === 0 && Math.abs(delta) > 0.1) direction = delta > 0 ? 1 : -1;
+            if ((direction===1 && delta>0) || (direction===-1 && delta<0)) angleAccum += Math.abs(delta);
+            else if (Math.abs(delta) > 0.2) resetCircle();
+            lastAngle = angle;
+            lastPoint = { x: p.clientX, y: p.clientY };
+            checkCircle();
+        }
+        function onUp() { isDrawing = false; resetCircle(); }
+
+        kneadZone.addEventListener('mousedown', onDown);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        kneadZone.addEventListener('touchstart', onDown, { passive:false });
+        window.addEventListener('touchmove', onMove, { passive:false });
+        window.addEventListener('touchend', onUp);
+    }
+
+    // 炭焙页
+    function initBake() {
+        if (document.getElementById('cageImg').dataset.init) return;
+        document.getElementById('cageImg').dataset.init = '1';
+        const scene = document.getElementById('mainScene');
+        const cageImg = document.getElementById('cageImg');
+        const leafImg2 = document.getElementById('leafImg2');
+        const bg71 = document.getElementById('bg71');
+        const bg73 = document.getElementById('bg73');
+        const bg74 = document.getElementById('bg74');
+        const bg76 = document.getElementById('bg76');
+        const clickZone = document.getElementById('clickZone');
+        const hint6 = document.getElementById('hint6');
+        const info6 = document.getElementById('info6');
+
+        let state = 'dragCage';
+        let currentDrag = null;
+        let dragStartX, dragStartY, startLeftPct, startTopPct;
+
+        function resetDraggable(elem, right, bottom) {
+            elem.style.left = 'auto'; elem.style.top = 'auto';
+            elem.style.right = right; elem.style.bottom = bottom;
+            elem.style.transform = 'none';
+        }
+        function getTarget() {
+            const r = scene.getBoundingClientRect();
+            return { x: r.width/2, y: r.height*0.65, rad: Math.min(r.width,r.height)*0.18 };
+        }
+        function isInTarget(elem) {
+            const t = getTarget();
+            const er = elem.getBoundingClientRect();
+            const sr = scene.getBoundingClientRect();
+            const cx = er.left + er.width/2 - sr.left;
+            const cy = er.top + er.height/2 - sr.top;
+            return Math.hypot(cx-t.x, cy-t.y) <= t.rad;
+        }
+
+        function onDragStart(e, elem) {
+            if (state === 'done') return;
+            e.preventDefault();
+            currentDrag = elem;
+            const p = e.touches ? e.touches[0] : e;
+            dragStartX = p.clientX; dragStartY = p.clientY;
+            const sr = scene.getBoundingClientRect();
+            const er = elem.getBoundingClientRect();
+            startLeftPct = ((er.left - sr.left)/sr.width)*100;
+            startTopPct = ((er.top - sr.top)/sr.height)*100;
+            elem.style.left = startLeftPct + '%';
+            elem.style.top = startTopPct + '%';
+            elem.style.right = 'auto'; elem.style.bottom = 'auto';
+            elem.style.cursor = 'grabbing';
+        }
+        function onDragMove(e) {
+            if (!currentDrag) return;
+            e.preventDefault();
+            const p = e.touches ? e.touches[0] : e;
+            const sr = scene.getBoundingClientRect();
+            const dx = p.clientX - dragStartX, dy = p.clientY - dragStartY;
+            const newL = startLeftPct + (dx/sr.width)*100;
+            const newT = startTopPct + (dy/sr.height)*100;
+            currentDrag.style.left = newL + '%';
+            currentDrag.style.top = newT + '%';
+        }
+        function onDragEnd() {
+            if (!currentDrag) return;
+            currentDrag.style.cursor = 'grab';
+            if (isInTarget(currentDrag)) {
+                if (currentDrag === cageImg && state === 'dragCage') {
+                    cageImg.style.display = 'none';
+                    bg71.style.opacity = '0';
+                    bg73.style.opacity = '1';
+                    hint6.textContent = '点击焙笼，开始炭焙';
+                    clickZone.style.display = 'block';
+                    state = 'clickCage';
+                } else if (currentDrag === leafImg2 && state === 'dragLeaf') {
+                    leafImg2.style.display = 'none';
+                    bg74.style.opacity = '0';
+                    bg76.style.opacity = '1';
+                    hint6.style.opacity = '0';
+                    info6.classList.add('show');
+                    state = 'done';
+                    setTimeout(() => goToPage(7), 2500);
+                }
+                if (currentDrag === cageImg) resetDraggable(cageImg, '5%', '8%');
+                if (currentDrag === leafImg2) resetDraggable(leafImg2, '5%', '8%');
+            } else {
+                if (currentDrag === cageImg) resetDraggable(cageImg, '5%', '8%');
+                if (currentDrag === leafImg2) resetDraggable(leafImg2, '5%', '8%');
+            }
+            currentDrag = null;
+        }
+
+        [cageImg, leafImg2].forEach(elem => {
+            elem.addEventListener('mousedown', e => onDragStart(e, elem));
+            elem.addEventListener('touchstart', e => onDragStart(e, elem), { passive:false });
+        });
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('touchmove', onDragMove, { passive:false });
+        window.addEventListener('mouseup', onDragEnd);
+        window.addEventListener('touchend', onDragEnd);
+
+        clickZone.addEventListener('click', () => {
+            if (state === 'clickCage') {
+                bg73.style.opacity = '0';
+                bg74.style.opacity = '1';
+                leafImg2.style.display = 'block';
+                hint6.textContent = '拖动茶叶至中央';
+                clickZone.style.display = 'none';
+                state = 'dragLeaf';
+            }
+        });
+        clickZone.addEventListener('touchend', e => { e.preventDefault(); clickZone.click(); });
+
+        resetDraggable(cageImg, '5%', '8%');
+        resetDraggable(leafImg2, '5%', '8%');
+    }
+
+    // 泡茶页
+    function initTea() {
+        if (document.getElementById('gongdao').dataset.init) return;
+        document.getElementById('gongdao').dataset.init = '1';
+
+        const STATE = { INIT:0, LID_OPEN:1, TEA_ADDED:2, WATER_ADDED:3, LID_CLOSED:4, SOUP_READY:5, DONE:6 };
+        let currentState = STATE.INIT;
+
+        const gongdao = document.getElementById('gongdao');
+        const gaiwan = document.getElementById('gaiwan');
+        const gaiwanImg = document.getElementById('gaiwanImg');
+        const kettle = document.getElementById('kettle');
+        const chaze = document.getElementById('chaze');
+        const guideText = document.getElementById('guideText7');
+        const infoText = document.getElementById('infoText7');
+        const bg81 = document.getElementById('bg81');
+        const bg90 = document.getElementById('bg90');
+        const bg91 = document.getElementById('bg91');
+        const bg81jpg = document.getElementById('bg81jpg');
+        const fogLayer = document.getElementById('fogLayer7');
+        const scene = document.getElementById('mainScene');
+
+        let currentDrag = null;
+        let dragStartX, dragStartY, startLeftPct, startTopPct;
+        let cup1Filled = false, cup2Filled = false;
+
+        function setPos(elem, left, top) { elem.style.left = left+'%'; elem.style.top = top+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.transform='none'; }
+        function getTarget(cxP, cyP, rP) { const r = scene.getBoundingClientRect(); return { x: r.width*(cxP/100), y: r.height*(cyP/100), rad: Math.min(r.width,r.height)*(rP/100) }; }
+        const gaiwanTarget = () => getTarget(50,44,12);
+        const gongdaoTarget = () => getTarget(20,44,14);
+        const cup1Target = () => getTarget(12,62,12);
+        const cup2Target = () => getTarget(36,68,12);
+
+        function isInTarget(elem, t) { const er = elem.getBoundingClientRect(), sr = scene.getBoundingClientRect(); return Math.hypot(er.left+er.width/2-sr.left - t.x, er.top+er.height/2-sr.top - t.y) <= t.rad; }
+        function resetGongdao() { if (gongdao.src.includes('89.png')) { setPos(gongdao,6,39); gongdao.style.width='34%'; } else { setPos(gongdao,6,40); gongdao.style.width='28%'; } }
+        function updateOutline() {
+            gongdao.classList.remove('outline-hint'); gaiwan.classList.remove('outline-hint');
+            kettle.classList.remove('outline-hint'); chaze.classList.remove('outline-hint');
+            if (currentState===STATE.INIT) gaiwan.classList.add('outline-hint');
+            else if (currentState===STATE.LID_OPEN) chaze.classList.add('outline-hint');
+            else if (currentState===STATE.TEA_ADDED) kettle.classList.add('outline-hint');
+            else if (currentState===STATE.WATER_ADDED) gaiwan.classList.add('outline-hint');
+            else if (currentState===STATE.LID_CLOSED) gaiwan.classList.add('outline-hint');
+            else if (currentState===STATE.SOUP_READY) gongdao.classList.add('outline-hint');
+        }
+
+        function onDragStart(e, elem) {
+            if (currentState===STATE.DONE) return;
+            if ((elem===chaze && currentState!==STATE.LID_OPEN) || (elem===kettle && currentState!==STATE.TEA_ADDED) ||
+                (elem===gaiwan && currentState!==STATE.LID_CLOSED) || (elem===gongdao && currentState!==STATE.SOUP_READY)) return;
+            e.preventDefault(); currentDrag = elem;
+            const p = e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY;
+            const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect();
+            startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100;
+            elem.style.transform = (elem===gongdao && gongdao.src.includes('89.png')) ? 'rotate(10deg)' : 'rotate(-10deg)';
+            elem.style.cursor='grabbing';
+        }
+        function onDragMove(e) { if (!currentDrag) return; e.preventDefault(); const p = e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
+        function onDragEnd() {
+            if (!currentDrag) return;
+            const elem=currentDrag; elem.style.cursor='grab'; elem.style.transform='none'; currentDrag=null;
+            if (elem===chaze && isInTarget(elem, gaiwanTarget())) { gaiwanImg.src='W:/批发市场/网页/tea/87.png'; chaze.style.display='none'; currentState=STATE.TEA_ADDED; guideText.textContent='拖动烧水壶注水'; updateOutline(); }
+            else if (elem===kettle && isInTarget(elem, gaiwanTarget())) { gaiwanImg.src='W:/批发市场/网页/tea/88.png'; kettle.style.display='none'; currentState=STATE.WATER_ADDED; guideText.textContent='点击盖碗，盖上盖子'; updateOutline(); }
+            else if (elem===gaiwan && isInTarget(elem, gongdaoTarget())) { gongdao.src='W:/批发市场/网页/tea/89.png'; gongdao.style.width='34%'; gaiwan.style.display='none'; currentState=STATE.SOUP_READY; guideText.textContent='拖动公道杯分茶'; updateOutline(); resetGongdao(); }
+            else if (elem===gongdao && currentState===STATE.SOUP_READY) {
+                if (!cup1Filled && isInTarget(elem, cup1Target())) { cup1Filled=true; bg90.style.opacity='1'; resetGongdao(); }
+                else if (!cup2Filled && isInTarget(elem, cup2Target())) { cup2Filled=true; bg91.style.opacity='1'; resetGongdao(); }
+                else { resetGongdao(); }
+                if (cup1Filled && cup2Filled) finish();
+            }
+        }
+        function finish() {
+            currentState=STATE.DONE; bg81.style.opacity='0'; bg90.style.opacity='0'; bg91.style.opacity='0'; bg81jpg.style.opacity='1';
+            guideText.style.opacity='0'; infoText.classList.add('show');
+            [gongdao,gaiwan,kettle,chaze].forEach(el=>el.style.pointerEvents='none');
+            setTimeout(()=>{ fogLayer.style.opacity='1'; setTimeout(()=>alert('品茶结束，感谢观赏'),1300); },2000);
+        }
+
+        [gongdao,gaiwan,kettle,chaze].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
+        window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
+        window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
+        window.addEventListener('touchcancel', onDragEnd);
+
+        gaiwan.addEventListener('click', function(e) {
+            if (currentState===STATE.INIT) { gaiwanImg.src='W:/批发市场/网页/tea/86.png'; currentState=STATE.LID_OPEN; guideText.textContent='拖动茶则放入茶叶'; updateOutline(); e.stopPropagation(); }
+            else if (currentState===STATE.WATER_ADDED) { gaiwanImg.src='W:/批发市场/网页/tea/84.png'; currentState=STATE.LID_CLOSED; guideText.textContent='拖动盖碗出汤'; updateOutline(); e.stopPropagation(); }
+        });
+        gaiwan.addEventListener('touchend', function(e) { if (currentState===STATE.INIT||currentState===STATE.WATER_ADDED) { e.preventDefault(); gaiwan.click(); } });
+
+        updateOutline();
+    }
+
+    // 图片容错
+    ['11.png','21.png','22.png','31.png','32.png','41.jpg','42.png','51.png','52.png','53.png','61.png','62.png','71.jpg','72.jpg','73.jpg','74.png','75.jpg','76.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png','90.png','91.png','81.jpg'].forEach(s => {
+        const img = new Image();
+        img.src = 'W:/批发市场/网页/tea/' + s;
+        img.onerror = () => console.warn('图片缺失：' + s);
+    });
+})();
+</script>
+</body>
+</html>
