@@ -159,6 +159,7 @@
             .hint-top { font-size: 0.9rem; }
         }
 
+        /* 泡茶页背景及元素 */
         .tea-bg-img {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center; background-repeat: no-repeat;
@@ -189,6 +190,51 @@
         }
         .tea-text-area .hint-top { position: static; margin-bottom: 10px; }
         .tea-text-area .info-box { position: static; text-align: left; }
+
+        /* 结束页诗句样式 */
+        .poem-wrapper {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.4rem;
+            align-items: flex-end;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .poem-wrapper.show { opacity: 1; }
+        .col {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            color: #1a1a1a;
+            font-size: 2rem;
+            letter-spacing: 0.3em;
+            text-shadow: 0 0 6px rgba(255,255,255,0.9), 0 0 12px rgba(255,255,245,0.6);
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+        .col-right { margin-bottom: 2rem; }
+
+        .restart-btn {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #1a1a1a;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 6px rgba(255,255,255,0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .restart-btn.show { opacity: 1; pointer-events: auto; }
+        .restart-btn:active { text-shadow: 0 0 10px rgba(255,255,255,1), 0 0 3px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -200,6 +246,7 @@
     <div class="corner-ornament corner-br"></div>
     <div class="fog-overlay" id="globalFog"></div>
 
+    <!-- 导入页 -->
     <div class="page active" id="page0">
         <div class="bg-full" style="background-image:url('./11.png');"></div>
         <div class="title-v" style="top:14%; left:50%; transform:translateX(-50%);">武夷岩茶<span class="sub">制作技艺</span></div>
@@ -207,6 +254,7 @@
         <div class="cup-zone" id="cupZone"></div>
     </div>
 
+    <!-- 采摘页 -->
     <div class="page" id="page1">
         <div class="bg-full" style="background-image:url('./21.png');"></div>
         <img src="./22.png" class="tea-leaf" style="top:70%; left:10%; --r:-32deg; transform:rotate(-32deg); width:14%;">
@@ -218,6 +266,7 @@
         <div class="info-box" id="info1" style="top:18%;"><strong>采摘</strong>采取伸育成熟，开叶三四面的新梢茶叶，一般掌握中开面采为宜。</div>
     </div>
 
+    <!-- 萎凋页 -->
     <div class="page" id="page2">
         <div class="bg-full" style="background-image:url('./32.png'); z-index:1;"></div>
         <div class="bg-full" id="wiltBefore" style="background-image:url('./31.png'); z-index:2;"></div>
@@ -227,6 +276,7 @@
         <div class="dots" id="wiltDots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
     </div>
 
+    <!-- 做青页 -->
     <div class="page" id="page3">
         <div class="bg-full" style="background-image:url('./41.jpg');"></div>
         <div class="shake-leaf-wrap" id="shakeContainer"><img src="./42.png" class="shake-leaf-img" id="shakeLeaf"></div>
@@ -234,15 +284,17 @@
         <div class="info-box" id="info3" style="top:6%; color: var(--text-dark); text-shadow: var(--white-stroke);"><strong>做青</strong>通过反复的摇青和静置发酵，促进青叶变化，形成"绿叶红镶边"的独特风格。</div>
     </div>
 
+    <!-- 炒青页 -->
     <div class="page" id="page4">
         <div class="bg-full layer-hot" style="background-image:url('./52.png'); z-index:1;"></div>
         <div class="bg-full layer-cold" id="coldLayer" style="background-image:url('./51.png'); z-index:2;"></div>
         <img src="./53.png" alt="茶叶" class="draggable" id="teaLeaf" style="right:-15%; bottom:2%; width:60%;">
         <div class="pan-zone" id="pressZone" style="display:none;"></div>
         <div class="hint-top" id="hint4" style="top:10%;">拖动茶叶至中央</div>
-        <div class="info-box" id="info4" style="top:14%;"><strong>炒青</strong>利用高温火力破坏酶的活性，中止发酵，稳定做青已形成的品质并纯化香气。</div>
+        <div class="info-box" id="info4" style="top:4%;"><strong>炒青</strong>利用高温火力破坏酶的活性，中止发酵，稳定做青已形成的品质并纯化香气。</div>
     </div>
 
+    <!-- 揉捻页 -->
     <div class="page" id="page5">
         <div class="bg-full" style="background-image:url('./62.png'); z-index:1;"></div>
         <div class="bg-full" id="kneadBefore" style="background-image:url('./61.png'); z-index:2;"></div>
@@ -252,6 +304,7 @@
         <div class="info-box" id="info5" style="top:13%;"><strong>揉捻</strong>揉捻使叶细胞破碎，茶汁溢出，条索紧结成形。</div>
     </div>
 
+    <!-- 炭焙页 -->
     <div class="page" id="page6">
         <div class="bg-full" style="background-image:url('./71.jpg'); z-index:1;" id="bg71"></div>
         <div class="bg-full" style="background-image:url('./73.jpg'); z-index:2; opacity:0;" id="bg73"></div>
@@ -264,6 +317,7 @@
         <div class="info-box" id="info6" style="top:13%;"><strong>炭焙</strong>通过炭火的穿透性加热，让茶叶进行转化，形成品质优异并稳定的好茶。</div>
     </div>
 
+    <!-- 泡茶页 -->
     <div class="page" id="page7">
         <div class="tea-bg-img bg-81" id="bg81"></div>
         <div class="tea-bg-img bg-90" id="bg90"></div>
@@ -279,23 +333,43 @@
         </div>
         <div class="fog-overlay" id="fogLayer7"></div>
     </div>
+
+    <!-- 结束页 -->
+    <div class="page" id="page8" style="background-image:url('./91.jpg');">
+        <div class="poem-wrapper" id="poemWrapper">
+            <div class="col">采摘新芽献地仙</div>
+            <div class="col col-right">武夷春暖月初圆</div>
+        </div>
+        <div class="restart-btn" id="restartBtn">重新开始</div>
+        <div class="fog-overlay" id="fogLayer8"></div>
+    </div>
 </div>
 
 <script>
 (function() {
+    // 音频资源
     const pickSound = new Audio('./1.mp3');
     pickSound.preload = 'auto';
-    const shakeSound = new Audio('./2.mp3');
-    shakeSound.loop = true;
-    shakeSound.preload = 'auto';
+    pickSound.volume = 1.0;           // 采茶音效调至最大
+    const shakeBgSound = new Audio('./3.mp3');
+    shakeBgSound.loop = true;
+    shakeBgSound.preload = 'auto';
+    const charcoalSound = new Audio('./炭.mp3');
+    charcoalSound.preload = 'auto';
+    const placeSound = new Audio('./放.mp3');
+    placeSound.preload = 'auto';
+    const bgm = new Audio('./music.mp3');
+    bgm.loop = true;
+    bgm.volume = 0.6;                 // 背景音乐60%
+
     let shakeAudioPlaying = false;
     let shakeTargetVolume = 0;
     let shakeCurrentVolume = 0;
 
     function stopShakeSound(immediate = false) {
         if (immediate) {
-            shakeSound.pause();
-            shakeSound.volume = 0;
+            shakeBgSound.pause();
+            shakeBgSound.volume = 0;
             shakeAudioPlaying = false;
             shakeCurrentVolume = 0;
             shakeTargetVolume = 0;
@@ -324,12 +398,23 @@
             else if (index === 5) initKnead();
             else if (index === 6) initBake();
             else if (index === 7) initTea();
+            else if (index === 8) initEnd();
         }, 900);
     }
 
-    document.getElementById('cupZone').addEventListener('click', () => goToPage(1));
-    document.getElementById('cupZone').addEventListener('touchend', e => { e.preventDefault(); goToPage(1); });
+    // 导入页点击播放音乐并跳转
+    const page0 = document.getElementById('page0');
+    let introTriggered = false;
+    function startIntro() {
+        if (introTriggered) return;
+        introTriggered = true;
+        bgm.play().catch(() => {});
+        goToPage(1);
+    }
+    page0.addEventListener('click', startIntro);
+    page0.addEventListener('touchend', (e) => { e.preventDefault(); startIntro(); });
 
+    // 采摘页
     function initPick() {
         const leaves = document.querySelectorAll('#page1 .tea-leaf');
         const hint1 = document.getElementById('hint1');
@@ -361,6 +446,7 @@
         });
     }
 
+    // 萎凋页
     function initWilt() {
         if (document.getElementById('wiltBefore').dataset.init) return;
         document.getElementById('wiltBefore').dataset.init = '1';
@@ -387,6 +473,7 @@
         window.addEventListener('touchend', () => { dragging=false; });
     }
 
+    // 做青页
     function initShake() {
         if (document.getElementById('shakeContainer').dataset.init) return;
         document.getElementById('shakeContainer').dataset.init = '1';
@@ -409,16 +496,48 @@
             const dx = ox - lastOx, dy = oy - lastOy, moved = Math.sqrt(dx*dx+dy*dy);
             totalDist += moved; lastOx = ox; lastOy = oy;
             const isMoving = moved > 0.5 || dragging;
-            if (isMoving) { shakeTargetVolume=1; if(!shakeAudioPlaying){ shakeSound.volume=0; shakeSound.play().then(()=>{shakeAudioPlaying=true;}).catch(()=>{}); } }
-            else { shakeTargetVolume=0; }
-            if (totalDist >= DIST_GOAL && !done) { done=true; hint3.style.opacity='0'; info3.classList.add('show'); stopShakeSound(); setTimeout(() => goToPage(4), 2800); }
+            if (isMoving) {
+                shakeTargetVolume = 1;
+                if (!shakeAudioPlaying) {
+                    shakeBgSound.volume = 0;
+                    shakeBgSound.play().then(() => { shakeAudioPlaying = true; }).catch(() => {});
+                }
+            } else {
+                shakeTargetVolume = 0;
+            }
+            if (totalDist >= DIST_GOAL && !done) {
+                done = true;
+                hint3.style.opacity = '0';
+                info3.classList.add('show');
+                stopShakeSound();
+                setTimeout(() => goToPage(4), 2800);
+            }
         }
-        function loop() { if(done) return; chk(); if(!dragging && !gyro){ ox+=(0-ox)*0.1; oy+=(0-oy)*0.1; } leaf.style.transform=`translate(${ox}px, ${oy}px)`;
-            if(shakeAudioPlaying){ if(shakeTargetVolume===1&&shakeCurrentVolume<1){ shakeCurrentVolume=Math.min(1,shakeCurrentVolume+0.05); shakeSound.volume=shakeCurrentVolume; } else if(shakeTargetVolume===0&&shakeCurrentVolume>0){ shakeCurrentVolume=Math.max(0,shakeCurrentVolume-0.02); shakeSound.volume=shakeCurrentVolume; if(shakeCurrentVolume<=0.01){shakeSound.pause();shakeAudioPlaying=false;shakeCurrentVolume=0;} } }
-            requestAnimationFrame(loop); }
+        function loop() {
+            if (done) return;
+            chk();
+            if (!dragging && !gyro) { ox += (0-ox)*0.1; oy += (0-oy)*0.1; }
+            leaf.style.transform = `translate(${ox}px, ${oy}px)`;
+            if (shakeAudioPlaying) {
+                if (shakeTargetVolume === 1 && shakeCurrentVolume < 1) {
+                    shakeCurrentVolume = Math.min(1, shakeCurrentVolume + 0.05);
+                    shakeBgSound.volume = shakeCurrentVolume;
+                } else if (shakeTargetVolume === 0 && shakeCurrentVolume > 0) {
+                    shakeCurrentVolume = Math.max(0, shakeCurrentVolume - 0.02);
+                    shakeBgSound.volume = shakeCurrentVolume;
+                    if (shakeCurrentVolume <= 0.01) {
+                        shakeBgSound.pause();
+                        shakeAudioPlaying = false;
+                        shakeCurrentVolume = 0;
+                    }
+                }
+            }
+            requestAnimationFrame(loop);
+        }
         requestAnimationFrame(loop);
     }
 
+    // 炒青页
     function initPan() {
         if (document.getElementById('coldLayer').dataset.init) return;
         document.getElementById('coldLayer').dataset.init = '1';
@@ -448,20 +567,102 @@
         function completePress() { pressDone=true; coldLayer.style.opacity='0'; pressZone.style.display='none'; state='shake'; hint4.textContent='摇晃手机或拖拽茶叶'; teaLeaf.style.pointerEvents='auto'; teaLeaf.style.cursor='move'; initShakePan(); }
 
         const SHAKE_DIST = 1200, MAX_MOVE_PAN = 12; let offX=0, offY=0, totalDist=0, lastOX=0, lastOY=0, shakeDone=false; let isShakeDrag=false, shakeDragSX, shakeDragSY, shakeDragBX, shakeDragBY;
-        function initShakePan() { window.addEventListener('deviceorientation', gyroPan); teaLeaf.addEventListener('mousedown', onShakeDragStart); teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false}); window.addEventListener('mousemove', onShakeDragMove); window.addEventListener('touchmove', onShakeDragMove, {passive:false}); window.addEventListener('mouseup', onShakeDragEnd); window.addEventListener('touchend', onShakeDragEnd); requestAnimationFrame(shakeLoop); }
-        function gyroPan(e) { if(shakeDone||isShakeDrag) return; if(e.beta!=null&&e.gamma!=null){ const g=Math.max(-45,Math.min(45,e.gamma))/45, b=Math.max(-45,Math.min(45,e.beta))/45; offX=g*MAX_MOVE_PAN; offY=b*MAX_MOVE_PAN; updateLeaf(); } }
+        function initShakePan() {
+            window.addEventListener('deviceorientation', gyroPan);
+            teaLeaf.addEventListener('mousedown', onShakeDragStart);
+            teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false});
+            window.addEventListener('mousemove', onShakeDragMove);
+            window.addEventListener('touchmove', onShakeDragMove, {passive:false});
+            window.addEventListener('mouseup', onShakeDragEnd);
+            window.addEventListener('touchend', onShakeDragEnd);
+            stopShakeSound(true);
+            shakeAudioPlaying = false;
+            shakeCurrentVolume = 0;
+            shakeTargetVolume = 0;
+            requestAnimationFrame(shakeLoop);
+        }
+        function gyroPan(e) {
+            if (shakeDone || isShakeDrag) return;
+            if (e.beta!=null && e.gamma!=null) {
+                const g = Math.max(-45,Math.min(45,e.gamma))/45, b = Math.max(-45,Math.min(45,e.beta))/45;
+                offX = g*MAX_MOVE_PAN; offY = b*MAX_MOVE_PAN;
+                updateLeaf();
+            }
+        }
         function updateLeaf() { teaLeaf.style.transform = `translate(-50%, -50%) translate(${offX}px, ${offY}px)`; }
-        function onShakeDragStart(e) { if(shakeDone) return; e.preventDefault(); isShakeDrag=true; const p=e.touches?e.touches[0]:e; shakeDragSX=p.clientX; shakeDragSY=p.clientY; shakeDragBX=offX; shakeDragBY=offY; }
-        function onShakeDragMove(e) { if(!isShakeDrag||shakeDone) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; offX=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX+(p.clientX-shakeDragSX))); offY=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY+(p.clientY-shakeDragSY))); updateLeaf(); }
-        function onShakeDragEnd() { isShakeDrag=false; }
-        function shakeLoop() { if(shakeDone) return; const dx=offX-lastOX, dy=offY-lastOY, moved=Math.sqrt(dx*dx+dy*dy); totalDist+=moved; lastOX=offX; lastOY=offY; if(totalDist>=SHAKE_DIST){ shakeDone=true; hint4.style.opacity='0'; info4.classList.add('show'); teaLeaf.style.pointerEvents='none'; window.removeEventListener('deviceorientation', gyroPan); setTimeout(()=>goToPage(5),2800); } else { requestAnimationFrame(shakeLoop); } }
+        function onShakeDragStart(e) {
+            if (shakeDone) return;
+            e.preventDefault();
+            isShakeDrag = true;
+            const p = e.touches ? e.touches[0] : e;
+            shakeDragSX = p.clientX; shakeDragSY = p.clientY;
+            shakeDragBX = offX; shakeDragBY = offY;
+        }
+        function onShakeDragMove(e) {
+            if (!isShakeDrag || shakeDone) return;
+            e.preventDefault();
+            const p = e.touches ? e.touches[0] : e;
+            offX = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX+(p.clientX-shakeDragSX)));
+            offY = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY+(p.clientY-shakeDragSY)));
+            updateLeaf();
+        }
+        function onShakeDragEnd() { isShakeDrag = false; }
 
-        teaLeaf.addEventListener('mousedown', onDragStart); teaLeaf.addEventListener('touchstart', onDragStart, {passive:false});
-        window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
-        window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
+        function shakeLoop() {
+            if (shakeDone) return;
+            const dx = offX - lastOX, dy = offY - lastOY, moved = Math.sqrt(dx*dx+dy*dy);
+            totalDist += moved;
+            lastOX = offX; lastOY = offY;
+
+            const isMoving = moved > 0.5 || isShakeDrag;
+            if (isMoving) {
+                shakeTargetVolume = 1;
+                if (!shakeAudioPlaying) {
+                    shakeBgSound.volume = 0;
+                    shakeBgSound.play().then(() => { shakeAudioPlaying = true; }).catch(() => {});
+                }
+            } else {
+                shakeTargetVolume = 0;
+            }
+
+            if (shakeAudioPlaying) {
+                if (shakeTargetVolume === 1 && shakeCurrentVolume < 1) {
+                    shakeCurrentVolume = Math.min(1, shakeCurrentVolume + 0.05);
+                    shakeBgSound.volume = shakeCurrentVolume;
+                } else if (shakeTargetVolume === 0 && shakeCurrentVolume > 0) {
+                    shakeCurrentVolume = Math.max(0, shakeCurrentVolume - 0.02);
+                    shakeBgSound.volume = shakeCurrentVolume;
+                    if (shakeCurrentVolume <= 0.01) {
+                        shakeBgSound.pause();
+                        shakeAudioPlaying = false;
+                        shakeCurrentVolume = 0;
+                    }
+                }
+            }
+
+            if (totalDist >= SHAKE_DIST) {
+                shakeDone = true;
+                hint4.style.opacity = '0';
+                info4.classList.add('show');
+                teaLeaf.style.pointerEvents = 'none';
+                window.removeEventListener('deviceorientation', gyroPan);
+                stopShakeSound();
+                setTimeout(() => goToPage(5), 2800);
+            } else {
+                requestAnimationFrame(shakeLoop);
+            }
+        }
+
+        teaLeaf.addEventListener('mousedown', onDragStart);
+        teaLeaf.addEventListener('touchstart', onDragStart, {passive:false});
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('touchmove', onDragMove, {passive:false});
+        window.addEventListener('mouseup', onDragEnd);
+        window.addEventListener('touchend', onDragEnd);
         resetLeaf();
     }
 
+    // 揉捻页
     function initKnead() {
         if (document.getElementById('kneadZone').dataset.init) return;
         document.getElementById('kneadZone').dataset.init = '1';
@@ -489,6 +690,7 @@
         kneadZone.addEventListener('touchstart', onDown, {passive:false}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onUp);
     }
 
+    // 炭焙页
     function initBake() {
         if (document.getElementById('cageImg').dataset.init) return;
         document.getElementById('cageImg').dataset.init = '1';
@@ -504,7 +706,30 @@
 
         function onDragStart(e, elem) { if(state==='done') return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.left=startLeftPct+'%'; elem.style.top=startTopPct+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
-        function onDragEnd() { if(!currentDrag) return; currentDrag.style.cursor='grab'; if(isInTarget(currentDrag)){ if(currentDrag===cageImg&&state==='dragCage'){ cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1'; hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block'; state='clickCage'; } else if(currentDrag===leafImg2&&state==='dragLeaf'){ leafImg2.style.display='none'; bg74.style.opacity='0'; bg76.style.opacity='1'; hint6.style.opacity='0'; info6.classList.add('show'); state='done'; setTimeout(()=>goToPage(7),2500); } if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%'); if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%'); } else { if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%'); if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%'); } currentDrag=null; }
+        function onDragEnd() {
+            if(!currentDrag) return;
+            currentDrag.style.cursor='grab';
+            if(isInTarget(currentDrag)){
+                if(currentDrag===cageImg&&state==='dragCage'){
+                    cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1';
+                    hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block';
+                    state='clickCage';
+                } else if(currentDrag===leafImg2&&state==='dragLeaf'){
+                    leafImg2.style.display='none'; bg74.style.opacity='0'; bg76.style.opacity='1';
+                    hint6.style.opacity='0'; info6.classList.add('show');
+                    state='done';
+                    charcoalSound.currentTime = 0;
+                    charcoalSound.play().catch(() => {});
+                    setTimeout(()=>goToPage(7),2500);
+                }
+                if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
+                if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
+            } else {
+                if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
+                if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
+            }
+            currentDrag=null;
+        }
 
         [cageImg, leafImg2].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
         window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
@@ -516,6 +741,7 @@
         resetDraggable(cageImg,'5%','8%'); resetDraggable(leafImg2,'5%','8%');
     }
 
+    // 泡茶页
     function initTea() {
         if (document.getElementById('gongdao').dataset.init) return;
         document.getElementById('gongdao').dataset.init = '1';
@@ -529,6 +755,8 @@
         let currentDrag = null, dragStartX, dragStartY, startLeftPct, startTopPct;
         let cup1Filled = false, cup2Filled = false;
 
+        function playPlaceSound() { placeSound.currentTime = 0; placeSound.play().catch(() => {}); }
+
         function setPos(elem, left, top) { elem.style.left=left+'%'; elem.style.top=top+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.transform='none'; }
         function getTarget(cxP, cyP, rP) { const r=scene.getBoundingClientRect(); return { x:r.width*(cxP/100), y:r.height*(cyP/100), rad:Math.min(r.width,r.height)*(rP/100) }; }
         const gaiwanTarget = () => getTarget(50,44,12), gongdaoTarget = () => getTarget(20,44,14), cup1Target = () => getTarget(12,62,12), cup2Target = () => getTarget(36,68,12);
@@ -538,8 +766,38 @@
 
         function onDragStart(e, elem) { if(currentState===STATE.DONE) return; if((elem===chaze&&currentState!==STATE.LID_OPEN)||(elem===kettle&&currentState!==STATE.TEA_ADDED)||(elem===gaiwan&&currentState!==STATE.LID_CLOSED)||(elem===gongdao&&currentState!==STATE.SOUP_READY)) return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.transform=(elem===gongdao&&gongdao.src.includes('89.png'))?'rotate(10deg)':'rotate(-10deg)'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
-        function onDragEnd() { if(!currentDrag) return; const elem=currentDrag; elem.style.cursor='grab'; elem.style.transform='none'; currentDrag=null; if(elem===chaze&&isInTarget(elem, gaiwanTarget())){ gaiwanImg.src='./87.png'; chaze.style.display='none'; currentState=STATE.TEA_ADDED; guideText.textContent='拖动烧水壶注水'; updateOutline(); } else if(elem===kettle&&isInTarget(elem, gaiwanTarget())){ gaiwanImg.src='./88.png'; kettle.style.display='none'; currentState=STATE.WATER_ADDED; guideText.textContent='点击盖碗，盖上盖子'; updateOutline(); } else if(elem===gaiwan&&isInTarget(elem, gongdaoTarget())){ gongdao.src='./89.png'; gongdao.style.width='34%'; gaiwan.style.display='none'; currentState=STATE.SOUP_READY; guideText.textContent='拖动公道杯分茶'; updateOutline(); resetGongdao(); } else if(elem===gongdao&&currentState===STATE.SOUP_READY){ if(!cup1Filled&&isInTarget(elem, cup1Target())){ cup1Filled=true; bg90.style.opacity='1'; resetGongdao(); } else if(!cup2Filled&&isInTarget(elem, cup2Target())){ cup2Filled=true; bg91.style.opacity='1'; resetGongdao(); } else { resetGongdao(); } if(cup1Filled&&cup2Filled) finish(); } }
-        function finish() { currentState=STATE.DONE; bg81.style.opacity='0'; bg90.style.opacity='0'; bg91.style.opacity='0'; bg81jpg.style.opacity='1'; guideText.style.opacity='0'; infoText.classList.add('show'); [gongdao,gaiwan,kettle,chaze].forEach(el=>el.style.pointerEvents='none'); setTimeout(()=>{ fogLayer.style.opacity='1'; setTimeout(()=>alert('品茶结束，感谢观赏'),1300); },2000); }
+        function onDragEnd() {
+            if(!currentDrag) return;
+            const elem=currentDrag; elem.style.cursor='grab'; elem.style.transform='none'; currentDrag=null;
+            if(elem===chaze&&isInTarget(elem, gaiwanTarget())){
+                gaiwanImg.src='./87.png'; chaze.style.display='none';
+                currentState=STATE.TEA_ADDED; guideText.textContent='拖动烧水壶注水'; updateOutline();
+                playPlaceSound();
+            } else if(elem===kettle&&isInTarget(elem, gaiwanTarget())){
+                gaiwanImg.src='./88.png'; kettle.style.display='none';
+                currentState=STATE.WATER_ADDED; guideText.textContent='点击盖碗，盖上盖子'; updateOutline();
+                playPlaceSound();
+            } else if(elem===gaiwan&&isInTarget(elem, gongdaoTarget())){
+                gongdao.src='./89.png'; gongdao.style.width='34%'; gaiwan.style.display='none';
+                currentState=STATE.SOUP_READY; guideText.textContent='拖动公道杯分茶'; updateOutline(); resetGongdao();
+                playPlaceSound();
+            } else if(elem===gongdao&&currentState===STATE.SOUP_READY){
+                if(!cup1Filled&&isInTarget(elem, cup1Target())){
+                    cup1Filled=true; bg90.style.opacity='1'; resetGongdao();
+                    playPlaceSound();
+                } else if(!cup2Filled&&isInTarget(elem, cup2Target())){
+                    cup2Filled=true; bg91.style.opacity='1'; resetGongdao();
+                    playPlaceSound();
+                } else { resetGongdao(); }
+                if(cup1Filled&&cup2Filled) finish();
+            }
+        }
+        function finish() {
+            currentState=STATE.DONE; bg81.style.opacity='0'; bg90.style.opacity='0'; bg91.style.opacity='0'; bg81jpg.style.opacity='1';
+            guideText.style.opacity='0'; infoText.classList.add('show');
+            [gongdao,gaiwan,kettle,chaze].forEach(el=>el.style.pointerEvents='none');
+            setTimeout(()=>{ goToPage(8); }, 2000);
+        }
 
         [gongdao,gaiwan,kettle,chaze].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
         window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
@@ -551,7 +809,23 @@
         updateOutline();
     }
 
-    const imgs = ['11.png','21.png','22.png','31.png','32.png','41.jpg','42.png','51.png','52.png','53.png','61.png','62.png','71.jpg','72.jpg','73.jpg','74.png','75.jpg','76.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png','90.png','91.png','81.jpg'];
+    // 结束页
+    function initEnd() {
+        const scene = document.getElementById('page8');
+        const poemWrapper = document.getElementById('poemWrapper');
+        const restartBtn = document.getElementById('restartBtn');
+        let state = 0;
+        scene.addEventListener('click', () => {
+            if (state === 0) { poemWrapper.classList.add('show'); state = 1; }
+            else if (state === 1) { restartBtn.classList.add('show'); state = 2; }
+        });
+        scene.addEventListener('touchend', (e) => { e.preventDefault(); scene.click(); });
+        restartBtn.addEventListener('click', (e) => { e.stopPropagation(); window.location.reload(); });
+        restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); restartBtn.click(); });
+    }
+
+    // 图片容错
+    const imgs = ['11.png','21.png','22.png','31.png','32.png','41.jpg','42.png','51.png','52.png','53.png','61.png','62.png','71.jpg','72.jpg','73.jpg','74.png','75.jpg','76.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png','90.png','91.png','81.jpg','91.jpg'];
     imgs.forEach(s => { const img = new Image(); img.src = './' + s; img.onerror = () => console.warn('图片缺失：' + s); });
 })();
 </script>
