@@ -67,8 +67,7 @@
         .title-v {
             position: absolute; z-index: 5; writing-mode: vertical-rl; text-orientation: mixed;
             color: var(--text-dark); font-size: 2rem; letter-spacing: 0.28em; font-weight: 600;
-            pointer-events: none;
-            text-shadow: var(--white-stroke);
+            pointer-events: none; text-shadow: var(--white-stroke);
         }
         .title-v .sub { font-size: 0.65em; letter-spacing: 0.35em; opacity: 0.75; margin-top: 0.3em; }
 
@@ -143,7 +142,6 @@
 
         .circle-hint { position: absolute; top: 68%; left: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: opacity 0.6s; }
         .circle-dashed { width: 80px; height: 80px; border: 2px dashed #8b7b62; border-radius: 50%; opacity: 0.7; }
-        .circle-text { font-size: 0.9rem; color: var(--text-dark); letter-spacing: 0.06em; text-shadow: var(--white-stroke); }
         .progress-dots { display: flex; gap: 6px; margin-top: 4px; }
         .progress-dots .dot { width: 8px; height: 8px; background: #cbb295; border-radius: 50%; transition: background 0.3s; }
         .progress-dots .dot.filled { background: #7a5c3e; }
@@ -336,10 +334,17 @@
         <div class="info-box" id="info4" style="top:4%;"><strong>炒青</strong>利用高温火力破坏酶的活性，中止发酵，稳定做青已形成的品质并纯化香气。</div>
     </div>
 
+    <!-- 揉捻页（移除底部文字） -->
     <div class="page" id="page5">
         <div class="bg-full" style="background-image:url('./62.png'); z-index:1;"></div>
         <div class="bg-full" id="kneadBefore" style="background-image:url('./61.png'); z-index:2;"></div>
-        <div class="circle-hint" id="circleHint"><div class="circle-dashed"></div><div class="circle-text">画圈揉捻</div><div class="progress-dots" id="kneadDots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+        <div class="circle-hint" id="circleHint">
+            <div class="circle-dashed"></div>
+            <!-- 移除 circle-text -->
+            <div class="progress-dots" id="kneadDots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
         <div class="knead-zone" id="kneadZone"></div>
         <div class="hint-top" id="hint5" style="top:15%;">以指画圆，反复揉捻</div>
         <div class="info-box" id="info5" style="top:13%;"><strong>揉捻</strong>揉捻使叶细胞破碎，茶汁溢出，条索紧结成形。</div>
@@ -512,7 +517,7 @@
         kneadZone.addEventListener('touchstart', onDown, {passive:false}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onUp);
     }
 
-    // 炭焙页（新控火）
+    // 炭焙页（控火失败重置）
     function initBake() {
         if (document.getElementById('cageImg').dataset.init) return;
         document.getElementById('cageImg').dataset.init = '1';
@@ -524,17 +529,42 @@
         const fireBtn = document.getElementById('fireBtn'), fireHint = document.getElementById('fireHint');
 
         let state = 'dragCage'; let currentDrag = null; let dragStartX, dragStartY, startLeftPct, startTopPct;
+        let fireTemp = 70, safeTime = 0, lastTimestamp = 0, fireAnimFrame = null;
+
         function resetDraggable(elem, right, bottom) { elem.style.left='auto'; elem.style.top='auto'; elem.style.right=right; elem.style.bottom=bottom; elem.style.transform='none'; }
         function getTarget() { const r=scene.getBoundingClientRect(); return { x:r.width/2, y:r.height*0.65, rad:Math.min(r.width,r.height)*0.18 }; }
         function isInTarget(elem) { const t=getTarget(), er=elem.getBoundingClientRect(), sr=scene.getBoundingClientRect(); return Math.hypot(er.left+er.width/2-sr.left - t.x, er.top+er.height/2-sr.top - t.y) <= t.rad; }
+
+        function resetBake() {
+            // 重置背景
+            bg71.style.opacity = '1'; bg73.style.opacity = '0'; bg74.style.opacity = '0'; bg76.style.opacity = '0';
+            // 显示焙笼，隐藏茶叶
+            cageImg.style.display = 'block'; leafImg2.style.display = 'none';
+            // 隐藏点击区、温度计和控火按钮
+            clickZone.style.display = 'none';
+            thermoBar.style.display = 'none'; fireBtn.style.display = 'none'; fireHint.style.display = 'none';
+            // 清除介绍文字，显示初始提示
+            hint6.style.opacity = '1'; hint6.textContent = '拖动焙笼至中央';
+            info6.classList.remove('show'); info6.style.opacity = '0';
+            // 状态重置为拖动焙笼
+            state = 'dragCage';
+            // 移除控火事件
+            fireBtn.removeEventListener('click', addTemperature);
+            fireBtn.removeEventListener('touchend', addTemperature);
+            if (fireAnimFrame) cancelAnimationFrame(fireAnimFrame);
+            fireAnimFrame = null;
+        }
 
         function onDragStart(e, elem) { if(state==='done'||state==='controlFire') return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.left=startLeftPct+'%'; elem.style.top=startTopPct+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
         function onDragEnd() {
             if(!currentDrag) return; currentDrag.style.cursor='grab';
             if(isInTarget(currentDrag)){
-                if(currentDrag===cageImg&&state==='dragCage'){ cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1'; hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block'; state='clickCage'; }
-                else if(currentDrag===leafImg2&&state==='dragLeaf'){
+                if(currentDrag===cageImg&&state==='dragCage'){
+                    cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1';
+                    hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block';
+                    state='clickCage';
+                } else if(currentDrag===leafImg2&&state==='dragLeaf'){
                     leafImg2.style.display='none'; bg74.style.opacity='0'; bg76.style.opacity='1';
                     state='controlFire'; charcoalSound.currentTime = 0; charcoalSound.play().catch(() => {});
                     hint6.style.opacity = '0'; info6.style.opacity = '0';
@@ -543,21 +573,22 @@
                 }
                 if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
                 if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
-            } else { if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%'); if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%'); }
+            } else {
+                if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
+                if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
+            }
             currentDrag=null;
         }
 
         [cageImg, leafImg2].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
         window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
         window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
+
         clickZone.addEventListener('click', ()=>{ if(state==='clickCage'){ bg73.style.opacity='0'; bg74.style.opacity='1'; leafImg2.style.display='block'; hint6.textContent='拖动茶叶至中央'; clickZone.style.display='none'; state='dragLeaf'; } });
         clickZone.addEventListener('touchend', e=>{ e.preventDefault(); clickZone.click(); });
 
-        let fireTemp = 70, safeTime = 0, lastTimestamp = 0, fireAnimFrame = null;
-        const SAFE_TARGET = 8000, TEMP_DECAY = 12, TEMP_ADD = 15;
-
         function updateThermo() { thermoLine.style.bottom = fireTemp + '%'; }
-        function addTemperature() { if (state !== 'controlFire') return; fireTemp = Math.min(100, fireTemp + TEMP_ADD); updateThermo(); }
+        function addTemperature() { if (state !== 'controlFire') return; fireTemp = Math.min(100, fireTemp + 15); updateThermo(); }
 
         function startFireControl() {
             fireTemp = 70; safeTime = 0; updateThermo();
@@ -571,13 +602,26 @@
             if (!lastTimestamp) lastTimestamp = timestamp;
             const delta = (timestamp - lastTimestamp) / 1000;
             if (delta > 0) {
-                fireTemp = Math.max(0, fireTemp - TEMP_DECAY * delta); updateThermo();
+                fireTemp = Math.max(0, fireTemp - 12 * delta);
+                updateThermo();
                 if (fireTemp >= 67 && fireTemp <= 100) safeTime += delta * 1000;
-                if (fireTemp <= 0) { fireTemp = 70; safeTime = 0; updateThermo(); thermoBar.style.borderColor = '#f00'; setTimeout(() => { thermoBar.style.borderColor = '#8b6f4e'; }, 500); }
-                if (safeTime >= SAFE_TARGET) {
-                    state = 'done'; cancelAnimationFrame(fireAnimFrame);
+                if (fireTemp <= 0) {
+                    // 失败
+                    fireHint.textContent = '温度过低，重新来过';
+                    setTimeout(() => {
+                        resetBake();
+                        fireHint.textContent = '点击底部控火，保持高温'; // 恢复文字
+                    }, 1500);
+                    cancelAnimationFrame(fireAnimFrame);
+                    fireBtn.removeEventListener('click', addTemperature);
+                    fireBtn.removeEventListener('touchend', addTemperature);
+                    state = 'reset'; // 临时状态，防止重复触发
+                    return;
+                }
+                if (safeTime >= 8000) {
+                    state = 'done';
+                    cancelAnimationFrame(fireAnimFrame);
                     thermoBar.style.display = 'none'; fireBtn.style.display = 'none'; fireHint.style.display = 'none';
-                    // 清除内联样式，显示介绍文字
                     info6.style.opacity = '1'; info6.classList.add('show');
                     fireBtn.removeEventListener('click', addTemperature);
                     fireBtn.removeEventListener('touchend', addTemperature);
