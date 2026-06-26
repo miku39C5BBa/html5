@@ -236,33 +236,37 @@
         .restart-btn.show { opacity: 1; pointer-events: auto; }
         .restart-btn:active { text-shadow: 0 0 10px rgba(255,255,255,1), 0 0 3px rgba(0,0,0,0.3); }
 
-        /* 炭焙控火极窄温度条 */
+        /* 炭焙控火-极细温度条 */
         .thermo-bar {
             position: absolute;
-            right: 3%;
-            bottom: 25%;
-            width: 4px;
-            height: 40%;
-            background: linear-gradient(to top, #38b, #f80);
-            border-radius: 2px;
+            right: 4%;
+            bottom: 22%;
+            width: 5px;
+            height: 38%;
+            background: linear-gradient(to top, #48b, #e85);
+            border-radius: 3px;
             z-index: 20;
-            overflow: hidden;
-            border: 1px solid rgba(180,160,130,0.5);
+            border: 1px solid rgba(180,155,120,0.6);
+            overflow: visible;
         }
-        .thermo-fill-cover {
+        .thermo-line {
             position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: #3a2e1e;
-            transition: height 0.2s ease;
+            left: -6px;
+            right: -6px;
+            height: 3px;
+            background: #1a1a1a;
+            border-radius: 1px;
+            z-index: 21;
+            transition: bottom 0.15s ease;
+            pointer-events: none;
         }
         .fire-btn {
             position: absolute;
-            bottom: 6%;
+            bottom: 2%;
             left: 50%;
             transform: translateX(-50%);
-            width: 20%;
-            height: 16%;
+            width: 22%;
+            height: 18%;
             background: transparent;
             z-index: 20;
             cursor: pointer;
@@ -289,7 +293,6 @@
     <div class="corner-ornament corner-br"></div>
     <div class="fog-overlay" id="globalFog"></div>
 
-    <!-- 导入页 -->
     <div class="page active" id="page0">
         <div class="bg-full" style="background-image:url('./11.png');"></div>
         <div class="title-v" style="top:14%; left:50%; transform:translateX(-50%);">武夷岩茶<span class="sub">制作技艺</span></div>
@@ -297,7 +300,6 @@
         <div class="cup-zone" id="cupZone"></div>
     </div>
 
-    <!-- 采摘页 -->
     <div class="page" id="page1">
         <div class="bg-full" style="background-image:url('./21.png');"></div>
         <img src="./22.png" class="tea-leaf" style="top:70%; left:10%; --r:-32deg; transform:rotate(-32deg); width:14%;">
@@ -309,7 +311,6 @@
         <div class="info-box" id="info1" style="top:18%;"><strong>采摘</strong>采取伸育成熟，开叶三四面的新梢茶叶，一般掌握中开面采为宜。</div>
     </div>
 
-    <!-- 萎凋页 -->
     <div class="page" id="page2">
         <div class="bg-full" style="background-image:url('./32.png'); z-index:1;"></div>
         <div class="bg-full" id="wiltBefore" style="background-image:url('./31.png'); z-index:2;"></div>
@@ -319,7 +320,6 @@
         <div class="dots" id="wiltDots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
     </div>
 
-    <!-- 做青页 -->
     <div class="page" id="page3">
         <div class="bg-full" style="background-image:url('./41.jpg');"></div>
         <div class="shake-leaf-wrap" id="shakeContainer"><img src="./42.png" class="shake-leaf-img" id="shakeLeaf"></div>
@@ -327,7 +327,6 @@
         <div class="info-box" id="info3" style="top:6%; color: var(--text-dark); text-shadow: var(--white-stroke);"><strong>做青</strong>通过反复的摇青和静置发酵，促进青叶变化，形成"绿叶红镶边"的独特风格。</div>
     </div>
 
-    <!-- 炒青页 -->
     <div class="page" id="page4">
         <div class="bg-full layer-hot" style="background-image:url('./52.png'); z-index:1;"></div>
         <div class="bg-full layer-cold" id="coldLayer" style="background-image:url('./51.png'); z-index:2;"></div>
@@ -337,7 +336,6 @@
         <div class="info-box" id="info4" style="top:4%;"><strong>炒青</strong>利用高温火力破坏酶的活性，中止发酵，稳定做青已形成的品质并纯化香气。</div>
     </div>
 
-    <!-- 揉捻页 -->
     <div class="page" id="page5">
         <div class="bg-full" style="background-image:url('./62.png'); z-index:1;"></div>
         <div class="bg-full" id="kneadBefore" style="background-image:url('./61.png'); z-index:2;"></div>
@@ -347,7 +345,7 @@
         <div class="info-box" id="info5" style="top:13%;"><strong>揉捻</strong>揉捻使叶细胞破碎，茶汁溢出，条索紧结成形。</div>
     </div>
 
-    <!-- 炭焙页 (新控火UI) -->
+    <!-- 炭焙页 -->
     <div class="page" id="page6">
         <div class="bg-full" style="background-image:url('./71.jpg'); z-index:1;" id="bg71"></div>
         <div class="bg-full" style="background-image:url('./73.jpg'); z-index:2; opacity:0;" id="bg73"></div>
@@ -359,15 +357,14 @@
         <div class="hint-top" id="hint6" style="top:15%;">拖动焙笼至中央</div>
         <div class="info-box" id="info6" style="top:13%;"><strong>炭焙</strong>通过炭火的穿透性加热，让茶叶进行转化，形成品质优异并稳定的好茶。</div>
 
-        <!-- 极窄温度条 -->
+        <!-- 极细温度条 + 黑色横线 -->
         <div class="thermo-bar" id="thermoBar" style="display:none;">
-            <div class="thermo-fill-cover" id="thermoCover"></div>
+            <div class="thermo-line" id="thermoLine" style="bottom:70%;"></div>
         </div>
         <div class="fire-btn" id="fireBtn" style="display:none;"></div>
         <div class="fire-hint" id="fireHint" style="display:none;">点击底部控火，保持高温</div>
     </div>
 
-    <!-- 泡茶页 -->
     <div class="page" id="page7">
         <div class="tea-bg-img bg-81" id="bg81"></div>
         <div class="tea-bg-img bg-90" id="bg90"></div>
@@ -384,7 +381,6 @@
         <div class="fog-overlay" id="fogLayer7"></div>
     </div>
 
-    <!-- 结束页 -->
     <div class="page" id="page8" style="background-image:url('./91.jpg');">
         <div class="poem-wrapper" id="poemWrapper">
             <div class="col">采摘新芽献地仙</div>
@@ -397,35 +393,16 @@
 
 <script>
 (function() {
-    // 音频资源
-    const pickSound = new Audio('./1.mp3');
-    pickSound.preload = 'auto';
-    pickSound.volume = 1.0;
-    const shakeBgSound = new Audio('./3.mp3');
-    shakeBgSound.loop = true;
-    shakeBgSound.preload = 'auto';
-    const charcoalSound = new Audio('./炭.mp3');
-    charcoalSound.preload = 'auto';
-    const placeSound = new Audio('./放.mp3');
-    placeSound.preload = 'auto';
-    const bgm = new Audio('./music.mp3');
-    bgm.loop = true;
-    bgm.volume = 0.6;
+    const pickSound = new Audio('./1.mp3'); pickSound.preload = 'auto'; pickSound.volume = 1.0;
+    const shakeBgSound = new Audio('./3.mp3'); shakeBgSound.loop = true; shakeBgSound.preload = 'auto';
+    const charcoalSound = new Audio('./炭.mp3'); charcoalSound.preload = 'auto';
+    const placeSound = new Audio('./放.mp3'); placeSound.preload = 'auto';
+    const bgm = new Audio('./music.mp3'); bgm.loop = true; bgm.volume = 0.6;
 
-    let shakeAudioPlaying = false;
-    let shakeTargetVolume = 0;
-    let shakeCurrentVolume = 0;
-
+    let shakeAudioPlaying = false, shakeTargetVolume = 0, shakeCurrentVolume = 0;
     function stopShakeSound(immediate = false) {
-        if (immediate) {
-            shakeBgSound.pause();
-            shakeBgSound.volume = 0;
-            shakeAudioPlaying = false;
-            shakeCurrentVolume = 0;
-            shakeTargetVolume = 0;
-        } else {
-            shakeTargetVolume = 0;
-        }
+        if (immediate) { shakeBgSound.pause(); shakeBgSound.volume = 0; shakeAudioPlaying = false; shakeCurrentVolume = 0; shakeTargetVolume = 0; }
+        else { shakeTargetVolume = 0; }
     }
 
     const pages = document.querySelectorAll('.page');
@@ -452,69 +429,23 @@
         }, 900);
     }
 
-    // 导入页点击播放音乐并跳转
-    const page0 = document.getElementById('page0');
-    let introTriggered = false;
-    function startIntro() {
-        if (introTriggered) return;
-        introTriggered = true;
-        bgm.play().catch(() => {});
-        goToPage(1);
-    }
+    const page0 = document.getElementById('page0'); let introTriggered = false;
+    function startIntro() { if (introTriggered) return; introTriggered = true; bgm.play().catch(() => {}); goToPage(1); }
     page0.addEventListener('click', startIntro);
     page0.addEventListener('touchend', (e) => { e.preventDefault(); startIntro(); });
 
-    // 采摘页
     function initPick() {
-        const leaves = document.querySelectorAll('#page1 .tea-leaf');
-        const hint1 = document.getElementById('hint1');
-        const info1 = document.getElementById('info1');
-        let picked = 0;
-        leaves.forEach(leaf => {
-            if (leaf.dataset.bound) return;
-            leaf.dataset.bound = '1';
-            leaf.addEventListener('click', function() {
-                if (this.classList.contains('picked')) return;
-                this.classList.add('picked', 'shake-it');
-                pickSound.currentTime = 0;
-                pickSound.play().catch(() => {});
-                const self = this;
-                const onAnimEnd = () => {
-                    self.style.opacity = '0';
-                    self.style.pointerEvents = 'none';
-                    self.removeEventListener('animationend', onAnimEnd);
-                    picked++;
-                    if (picked === leaves.length) {
-                        hint1.style.opacity = '0';
-                        info1.classList.add('show');
-                        setTimeout(() => goToPage(2), 2800);
-                    }
-                };
-                this.addEventListener('animationend', onAnimEnd);
-            });
+        const leaves = document.querySelectorAll('#page1 .tea-leaf'); const hint1 = document.getElementById('hint1'); const info1 = document.getElementById('info1'); let picked = 0;
+        leaves.forEach(leaf => { if (leaf.dataset.bound) return; leaf.dataset.bound = '1';
+            leaf.addEventListener('click', function() { if (this.classList.contains('picked')) return; this.classList.add('picked', 'shake-it'); pickSound.currentTime = 0; pickSound.play().catch(() => {}); const self = this; const onAnimEnd = () => { self.style.opacity = '0'; self.style.pointerEvents = 'none'; self.removeEventListener('animationend', onAnimEnd); picked++; if (picked === leaves.length) { hint1.style.opacity = '0'; info1.classList.add('show'); setTimeout(() => goToPage(2), 2800); } }; this.addEventListener('animationend', onAnimEnd); });
             leaf.addEventListener('touchend', e => { e.preventDefault(); leaf.click(); });
         });
     }
 
-    // 萎凋页
     function initWilt() {
         if (document.getElementById('wiltBefore').dataset.init) return;
-        document.getElementById('wiltBefore').dataset.init = '1';
-        const before = document.getElementById('wiltBefore');
-        const hint2 = document.getElementById('hint2');
-        const info2 = document.getElementById('info2');
-        const dots = document.querySelectorAll('#wiltDots .dot');
-        const zone = document.getElementById('slideZone');
-        const TOTAL = 2500, STEP = TOTAL/5;
-        let dist = 0, done = false, dragging = false, lx = 0, ly = 0;
-        function upd() {
-            if (done) return;
-            const p = Math.min(dist/TOTAL, 1);
-            before.style.opacity = (1-p).toFixed(2);
-            const f = Math.floor(dist/STEP);
-            dots.forEach((d,i) => d.classList.toggle('fill', i<f));
-            if (dist >= TOTAL && !done) { done = true; hint2.style.opacity = '0'; info2.classList.add('show'); setTimeout(() => goToPage(3), 2800); }
-        }
+        document.getElementById('wiltBefore').dataset.init = '1'; const before = document.getElementById('wiltBefore'); const hint2 = document.getElementById('hint2'); const info2 = document.getElementById('info2'); const dots = document.querySelectorAll('#wiltDots .dot'); const zone = document.getElementById('slideZone'); const TOTAL = 2500, STEP = TOTAL/5; let dist = 0, done = false, dragging = false, lx = 0, ly = 0;
+        function upd() { if (done) return; const p = Math.min(dist/TOTAL, 1); before.style.opacity = (1-p).toFixed(2); const f = Math.floor(dist/STEP); dots.forEach((d,i) => d.classList.toggle('fill', i<f)); if (dist >= TOTAL && !done) { done = true; hint2.style.opacity = '0'; info2.classList.add('show'); setTimeout(() => goToPage(3), 2800); } }
         zone.addEventListener('mousedown', e => { if(done) return; dragging=true; lx=e.clientX; ly=e.clientY; e.preventDefault(); });
         window.addEventListener('mousemove', e => { if(!dragging||done) return; const d = Math.hypot(e.clientX-lx, e.clientY-ly); dist = Math.min(dist+d, TOTAL); lx=e.clientX; ly=e.clientY; upd(); });
         window.addEventListener('mouseup', () => { dragging=false; });
@@ -523,154 +454,60 @@
         window.addEventListener('touchend', () => { dragging=false; });
     }
 
-    // 做青页
     function initShake() {
         if (document.getElementById('shakeContainer').dataset.init) return;
-        document.getElementById('shakeContainer').dataset.init = '1';
-        const cont = document.getElementById('shakeContainer');
-        const leaf = document.getElementById('shakeLeaf');
-        const hint3 = document.getElementById('hint3');
-        const info3 = document.getElementById('info3');
-        const MAX = 15, DIST_GOAL = 1500;
-        let ox = 0, oy = 0, dragging = false, sx = 0, sy = 0, bx = 0, by = 0;
-        let totalDist = 0, lastOx = 0, lastOy = 0, done = false, gyro = false;
+        document.getElementById('shakeContainer').dataset.init = '1'; const cont = document.getElementById('shakeContainer'); const leaf = document.getElementById('shakeLeaf'); const hint3 = document.getElementById('hint3'); const info3 = document.getElementById('info3'); const MAX = 15, DIST_GOAL = 1500; let ox = 0, oy = 0, dragging = false, sx = 0, sy = 0, bx = 0, by = 0; let totalDist = 0, lastOx = 0, lastOy = 0, done = false, gyro = false;
         window.addEventListener('deviceorientation', e => { if(done) return; if(e.beta!=null && e.gamma!=null) { gyro=true; const g=Math.max(-30,Math.min(30,e.gamma))/30, b=Math.max(-30,Math.min(30,e.beta))/30; if(!dragging){ ox=g*MAX; oy=b*MAX; } } });
         function ds(e) { if(done) return; dragging=true; const p=e.touches?e.touches[0]:e; sx=p.clientX; sy=p.clientY; bx=ox; by=oy; e.preventDefault(); }
         function dm(e) { if(!dragging||done) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; ox=Math.min(MAX,Math.max(-MAX,bx+(p.clientX-sx))); oy=Math.min(MAX,Math.max(-MAX,by+(p.clientY-sy))); }
         function de() { dragging=false; }
         cont.addEventListener('mousedown', ds); window.addEventListener('mousemove', e => { if(dragging) dm(e); }); window.addEventListener('mouseup', de);
         cont.addEventListener('touchstart', ds, {passive:false}); window.addEventListener('touchmove', e => { if(dragging) dm(e); }, {passive:false}); window.addEventListener('touchend', de);
-
-        function chk() {
-            if (done) return;
-            const dx = ox - lastOx, dy = oy - lastOy, moved = Math.sqrt(dx*dx+dy*dy);
-            totalDist += moved; lastOx = ox; lastOy = oy;
-            const isMoving = moved > 0.5 || dragging;
-            if (isMoving) {
-                shakeTargetVolume = 1;
-                if (!shakeAudioPlaying) {
-                    shakeBgSound.volume = 0;
-                    shakeBgSound.play().then(() => { shakeAudioPlaying = true; }).catch(() => {});
-                }
-            } else {
-                shakeTargetVolume = 0;
-            }
-            if (totalDist >= DIST_GOAL && !done) {
-                done = true;
-                hint3.style.opacity = '0';
-                info3.classList.add('show');
-                stopShakeSound();
-                setTimeout(() => goToPage(4), 2800);
-            }
-        }
-        function loop() {
-            if (done) return;
-            chk();
-            if (!dragging && !gyro) { ox += (0-ox)*0.1; oy += (0-oy)*0.1; }
-            leaf.style.transform = `translate(${ox}px, ${oy}px)`;
-            if (shakeAudioPlaying) {
-                if (shakeTargetVolume === 1 && shakeCurrentVolume < 1) {
-                    shakeCurrentVolume = Math.min(1, shakeCurrentVolume + 0.05);
-                    shakeBgSound.volume = shakeCurrentVolume;
-                } else if (shakeTargetVolume === 0 && shakeCurrentVolume > 0) {
-                    shakeCurrentVolume = Math.max(0, shakeCurrentVolume - 0.02);
-                    shakeBgSound.volume = shakeCurrentVolume;
-                    if (shakeCurrentVolume <= 0.01) {
-                        shakeBgSound.pause();
-                        shakeAudioPlaying = false;
-                        shakeCurrentVolume = 0;
-                    }
-                }
-            }
-            requestAnimationFrame(loop);
-        }
+        function chk() { if (done) return; const dx = ox - lastOx, dy = oy - lastOy, moved = Math.sqrt(dx*dx+dy*dy); totalDist += moved; lastOx = ox; lastOy = oy; const isMoving = moved > 0.5 || dragging; if (isMoving) { shakeTargetVolume = 1; if (!shakeAudioPlaying) { shakeBgSound.volume = 0; shakeBgSound.play().then(() => { shakeAudioPlaying = true; }).catch(() => {}); } } else { shakeTargetVolume = 0; } if (totalDist >= DIST_GOAL && !done) { done = true; hint3.style.opacity = '0'; info3.classList.add('show'); stopShakeSound(); setTimeout(() => goToPage(4), 2800); } }
+        function loop() { if (done) return; chk(); if (!dragging && !gyro) { ox += (0-ox)*0.1; oy += (0-oy)*0.1; } leaf.style.transform = `translate(${ox}px, ${oy}px)`; if (shakeAudioPlaying) { if (shakeTargetVolume === 1 && shakeCurrentVolume < 1) { shakeCurrentVolume = Math.min(1, shakeCurrentVolume + 0.05); shakeBgSound.volume = shakeCurrentVolume; } else if (shakeTargetVolume === 0 && shakeCurrentVolume > 0) { shakeCurrentVolume = Math.max(0, shakeCurrentVolume - 0.02); shakeBgSound.volume = shakeCurrentVolume; if (shakeCurrentVolume <= 0.01) { shakeBgSound.pause(); shakeAudioPlaying = false; shakeCurrentVolume = 0; } } } requestAnimationFrame(loop); }
         requestAnimationFrame(loop);
     }
 
-    // 炒青页
     function initPan() {
         if (document.getElementById('coldLayer').dataset.init) return;
-        document.getElementById('coldLayer').dataset.init = '1';
-        const coldLayer = document.getElementById('coldLayer');
-        const teaLeaf = document.getElementById('teaLeaf');
-        const pressZone = document.getElementById('pressZone');
-        const hint4 = document.getElementById('hint4');
-        const info4 = document.getElementById('info4');
-        const scene = document.getElementById('mainScene');
-
-        let state = 'drag';
-        let leafPlaced = false;
-        let isDragging = false, dragStartX, dragStartY, startLeftPct, startTopPct;
-
+        document.getElementById('coldLayer').dataset.init = '1'; const coldLayer = document.getElementById('coldLayer'); const teaLeaf = document.getElementById('teaLeaf'); const pressZone = document.getElementById('pressZone'); const hint4 = document.getElementById('hint4'); const info4 = document.getElementById('info4'); const scene = document.getElementById('mainScene');
+        let state = 'drag'; let leafPlaced = false; let isDragging = false, dragStartX, dragStartY, startLeftPct, startTopPct;
         function resetLeaf() { teaLeaf.style.left='auto'; teaLeaf.style.top='auto'; teaLeaf.style.right='-15%'; teaLeaf.style.bottom='2%'; teaLeaf.style.width='60%'; teaLeaf.style.transform='none'; }
         function getTarget() { const r=scene.getBoundingClientRect(); return { x:r.width/2, y:r.height*0.56, rad:Math.min(r.width,r.height)*0.18 }; }
         function leafInTarget() { const t=getTarget(); const lr=teaLeaf.getBoundingClientRect(), sr=scene.getBoundingClientRect(); return Math.hypot(lr.left+lr.width/2-sr.left - t.x, lr.top+lr.height/2-sr.top - t.y) <= t.rad; }
-
         function onDragStart(e) { if(state!=='drag'||leafPlaced) return; e.preventDefault(); isDragging=true; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), lr=teaLeaf.getBoundingClientRect(); startLeftPct=((lr.left-sr.left)/sr.width)*100; startTopPct=((lr.top-sr.top)/sr.height)*100; teaLeaf.style.left=startLeftPct+'%'; teaLeaf.style.top=startTopPct+'%'; teaLeaf.style.right='auto'; teaLeaf.style.bottom='auto'; teaLeaf.style.cursor='grabbing'; }
         function onDragMove(e) { if(!isDragging||state!=='drag'||leafPlaced) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); teaLeaf.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; teaLeaf.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
         function onDragEnd() { if(!isDragging) return; isDragging=false; teaLeaf.style.cursor='grab'; if(leafInTarget()){ leafPlaced=true; const t=getTarget(), sr=scene.getBoundingClientRect(); teaLeaf.style.left=(t.x/sr.width*100)+'%'; teaLeaf.style.top=(t.y/sr.height*100)+'%'; teaLeaf.style.width='100%'; teaLeaf.style.transform='translate(-50%, -50%)'; teaLeaf.classList.add('placed'); state='press'; hint4.textContent='长按铁锅，开始杀青'; pressZone.style.display='block'; teaLeaf.style.pointerEvents='none'; bindPress(); } else { resetLeaf(); } }
-
         function bindPress() { pressZone.addEventListener('mousedown', startPress); pressZone.addEventListener('touchstart', startPress, {passive:false}); window.addEventListener('mouseup', endPress); window.addEventListener('touchend', endPress); }
         const PRESS_DUR = 2000; let pressTimer, pressStart, pressDone = false;
         function startPress(e) { if(state!=='press'||pressDone) return; e.preventDefault(); pressStart=Date.now(); pressTimer=setInterval(()=>{ const elapsed=Date.now()-pressStart; coldLayer.style.opacity = (1-Math.min(elapsed/PRESS_DUR,1)).toFixed(2); if(elapsed>=PRESS_DUR){ clearInterval(pressTimer); completePress(); } },50); }
         function endPress() { if(state==='press'&&!pressDone){ clearInterval(pressTimer); coldLayer.style.opacity='1'; } }
         function completePress() { pressDone=true; coldLayer.style.opacity='0'; pressZone.style.display='none'; state='shake'; hint4.textContent='摇晃手机或拖拽茶叶'; teaLeaf.style.pointerEvents='auto'; teaLeaf.style.cursor='move'; initShakePan(); }
-
         const SHAKE_DIST = 1200, MAX_MOVE_PAN = 12; let offX=0, offY=0, totalDist=0, lastOX=0, lastOY=0, shakeDone=false; let isShakeDrag=false, shakeDragSX, shakeDragSY, shakeDragBX, shakeDragBY;
-        function initShakePan() {
-            window.addEventListener('deviceorientation', gyroPan); teaLeaf.addEventListener('mousedown', onShakeDragStart); teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false});
-            window.addEventListener('mousemove', onShakeDragMove); window.addEventListener('touchmove', onShakeDragMove, {passive:false});
-            window.addEventListener('mouseup', onShakeDragEnd); window.addEventListener('touchend', onShakeDragEnd);
-            stopShakeSound(true); shakeAudioPlaying = false; shakeCurrentVolume = 0; shakeTargetVolume = 0; requestAnimationFrame(shakeLoop);
-        }
+        function initShakePan() { window.addEventListener('deviceorientation', gyroPan); teaLeaf.addEventListener('mousedown', onShakeDragStart); teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false}); window.addEventListener('mousemove', onShakeDragMove); window.addEventListener('touchmove', onShakeDragMove, {passive:false}); window.addEventListener('mouseup', onShakeDragEnd); window.addEventListener('touchend', onShakeDragEnd); stopShakeSound(true); shakeAudioPlaying = false; shakeCurrentVolume = 0; shakeTargetVolume = 0; requestAnimationFrame(shakeLoop); }
         function gyroPan(e) { if (shakeDone || isShakeDrag) return; if (e.beta!=null && e.gamma!=null) { const g = Math.max(-45,Math.min(45,e.gamma))/45, b = Math.max(-45,Math.min(45,e.beta))/45; offX = g*MAX_MOVE_PAN; offY = b*MAX_MOVE_PAN; updateLeaf(); } }
         function updateLeaf() { teaLeaf.style.transform = `translate(-50%, -50%) translate(${offX}px, ${offY}px)`; }
         function onShakeDragStart(e) { if (shakeDone) return; e.preventDefault(); isShakeDrag=true; const p=e.touches?e.touches[0]:e; shakeDragSX=p.clientX; shakeDragSY=p.clientY; shakeDragBX=offX; shakeDragBY=offY; }
         function onShakeDragMove(e) { if (!isShakeDrag || shakeDone) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; offX=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX+(p.clientX-shakeDragSX))); offY=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY+(p.clientY-shakeDragSY))); updateLeaf(); }
         function onShakeDragEnd() { isShakeDrag = false; }
-
-        function shakeLoop() {
-            if (shakeDone) return;
-            const dx = offX - lastOX, dy = offY - lastOY, moved = Math.sqrt(dx*dx+dy*dy);
-            totalDist += moved; lastOX = offX; lastOY = offY;
-            const isMoving = moved > 0.5 || isShakeDrag;
-            if (isMoving) { shakeTargetVolume = 1; if (!shakeAudioPlaying) { shakeBgSound.volume=0; shakeBgSound.play().then(()=>{shakeAudioPlaying=true;}).catch(()=>{}); } }
-            else { shakeTargetVolume = 0; }
-            if (shakeAudioPlaying) { if (shakeTargetVolume===1 && shakeCurrentVolume<1) { shakeCurrentVolume=Math.min(1,shakeCurrentVolume+0.05); shakeBgSound.volume=shakeCurrentVolume; } else if (shakeTargetVolume===0 && shakeCurrentVolume>0) { shakeCurrentVolume=Math.max(0,shakeCurrentVolume-0.02); shakeBgSound.volume=shakeCurrentVolume; if(shakeCurrentVolume<=0.01){shakeBgSound.pause();shakeAudioPlaying=false;shakeCurrentVolume=0;} } }
-            if (totalDist >= SHAKE_DIST) { shakeDone=true; hint4.style.opacity='0'; info4.classList.add('show'); teaLeaf.style.pointerEvents='none'; window.removeEventListener('deviceorientation', gyroPan); stopShakeSound(); setTimeout(() => goToPage(5), 2800); }
-            else { requestAnimationFrame(shakeLoop); }
-        }
-
+        function shakeLoop() { if (shakeDone) return; const dx = offX - lastOX, dy = offY - lastOY, moved = Math.sqrt(dx*dx+dy*dy); totalDist += moved; lastOX = offX; lastOY = offY; const isMoving = moved > 0.5 || isShakeDrag; if (isMoving) { shakeTargetVolume = 1; if (!shakeAudioPlaying) { shakeBgSound.volume=0; shakeBgSound.play().then(()=>{shakeAudioPlaying=true;}).catch(()=>{}); } } else { shakeTargetVolume = 0; } if (shakeAudioPlaying) { if (shakeTargetVolume===1 && shakeCurrentVolume<1) { shakeCurrentVolume=Math.min(1,shakeCurrentVolume+0.05); shakeBgSound.volume=shakeCurrentVolume; } else if (shakeTargetVolume===0 && shakeCurrentVolume>0) { shakeCurrentVolume=Math.max(0,shakeCurrentVolume-0.02); shakeBgSound.volume=shakeCurrentVolume; if(shakeCurrentVolume<=0.01){shakeBgSound.pause();shakeAudioPlaying=false;shakeCurrentVolume=0;} } } if (totalDist >= SHAKE_DIST) { shakeDone=true; hint4.style.opacity='0'; info4.classList.add('show'); teaLeaf.style.pointerEvents='none'; window.removeEventListener('deviceorientation', gyroPan); stopShakeSound(); setTimeout(() => goToPage(5), 2800); } else { requestAnimationFrame(shakeLoop); } }
         teaLeaf.addEventListener('mousedown', onDragStart); teaLeaf.addEventListener('touchstart', onDragStart, {passive:false});
         window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
         window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
         resetLeaf();
     }
 
-    // 揉捻页
     function initKnead() {
         if (document.getElementById('kneadZone').dataset.init) return;
-        document.getElementById('kneadZone').dataset.init = '1';
-        const kneadZone = document.getElementById('kneadZone');
-        const beforeLayer = document.getElementById('kneadBefore');
-        const circleHint = document.getElementById('circleHint');
-        const hint5 = document.getElementById('hint5');
-        const info5 = document.getElementById('info5');
-        const dots = document.querySelectorAll('#kneadDots .dot');
-        const TOTAL_CIRCLES = 5;
-        let currentCircles = 0, isFinished = false;
-        let isDrawing = false, lastAngle = 0, angleAccum = 0, direction = 0, lastPoint = null;
-
+        document.getElementById('kneadZone').dataset.init = '1'; const kneadZone = document.getElementById('kneadZone'); const beforeLayer = document.getElementById('kneadBefore'); const circleHint = document.getElementById('circleHint'); const hint5 = document.getElementById('hint5'); const info5 = document.getElementById('info5'); const dots = document.querySelectorAll('#kneadDots .dot'); const TOTAL_CIRCLES = 5; let currentCircles = 0, isFinished = false; let isDrawing = false, lastAngle = 0, angleAccum = 0, direction = 0, lastPoint = null;
         function getCenter() { const r = kneadZone.getBoundingClientRect(); return { x: r.left+r.width/2, y: r.top+r.height/2 }; }
         function getAngle(cx, cy) { const c = getCenter(); return Math.atan2(cy-c.y, cx-c.x); }
         function resetCircle() { angleAccum=0; direction=0; lastPoint=null; }
         function checkCircle() { if(Math.abs(angleAccum)>=Math.PI*1.85 && direction!==0){ currentCircles++; beforeLayer.style.opacity = (1-currentCircles/TOTAL_CIRCLES).toFixed(2); dots.forEach((d,i)=>d.classList.toggle('filled', i<currentCircles)); resetCircle(); if(currentCircles>=TOTAL_CIRCLES) finish(); } }
         function finish() { isFinished=true; circleHint.style.opacity='0'; hint5.style.opacity='0'; info5.classList.add('show'); kneadZone.style.pointerEvents='none'; setTimeout(()=>goToPage(6),2800); }
-
         function onDown(e) { if(isFinished) return; e.preventDefault(); isDrawing=true; const p=e.touches?e.touches[0]:e; lastPoint={x:p.clientX,y:p.clientY}; lastAngle=getAngle(p.clientX,p.clientY); angleAccum=0; direction=0; }
         function onMove(e) { if(!isDrawing||isFinished) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; const angle=getAngle(p.clientX,p.clientY); let delta=angle-lastAngle; if(delta>Math.PI) delta-=2*Math.PI; if(delta<-Math.PI) delta+=2*Math.PI; if(Math.abs(delta)<0.05) return; if(direction===0&&Math.abs(delta)>0.1) direction=delta>0?1:-1; if((direction===1&&delta>0)||(direction===-1&&delta<0)) angleAccum+=Math.abs(delta); else if(Math.abs(delta)>0.2) resetCircle(); lastAngle=angle; lastPoint={x:p.clientX,y:p.clientY}; checkCircle(); }
         function onUp() { isDrawing=false; resetCircle(); }
-
         kneadZone.addEventListener('mousedown', onDown); window.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onUp);
         kneadZone.addEventListener('touchstart', onDown, {passive:false}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onUp);
     }
@@ -683,7 +520,7 @@
         const cageImg = document.getElementById('cageImg'), leafImg2 = document.getElementById('leafImg2');
         const bg71 = document.getElementById('bg71'), bg73 = document.getElementById('bg73'), bg74 = document.getElementById('bg74'), bg76 = document.getElementById('bg76');
         const clickZone = document.getElementById('clickZone'), hint6 = document.getElementById('hint6'), info6 = document.getElementById('info6');
-        const thermoBar = document.getElementById('thermoBar'), thermoCover = document.getElementById('thermoCover');
+        const thermoBar = document.getElementById('thermoBar'), thermoLine = document.getElementById('thermoLine');
         const fireBtn = document.getElementById('fireBtn'), fireHint = document.getElementById('fireHint');
 
         let state = 'dragCage'; let currentDrag = null; let dragStartX, dragStartY, startLeftPct, startTopPct;
@@ -694,49 +531,36 @@
         function onDragStart(e, elem) { if(state==='done'||state==='controlFire') return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.left=startLeftPct+'%'; elem.style.top=startTopPct+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
         function onDragEnd() {
-            if(!currentDrag) return;
-            currentDrag.style.cursor='grab';
+            if(!currentDrag) return; currentDrag.style.cursor='grab';
             if(isInTarget(currentDrag)){
-                if(currentDrag===cageImg&&state==='dragCage'){
-                    cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1';
-                    hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block';
-                    state='clickCage';
-                } else if(currentDrag===leafImg2&&state==='dragLeaf'){
+                if(currentDrag===cageImg&&state==='dragCage'){ cageImg.style.display='none'; bg71.style.opacity='0'; bg73.style.opacity='1'; hint6.textContent='点击焙笼，开始炭焙'; clickZone.style.display='block'; state='clickCage'; }
+                else if(currentDrag===leafImg2&&state==='dragLeaf'){
                     leafImg2.style.display='none'; bg74.style.opacity='0'; bg76.style.opacity='1';
-                    state='controlFire';
-                    charcoalSound.currentTime = 0;
-                    charcoalSound.play().catch(() => {});
-                    hint6.style.opacity = '0';
-                    info6.style.opacity = '0';
-                    thermoBar.style.display = 'block';
-                    fireBtn.style.display = 'block';
-                    fireHint.style.display = 'block';
+                    state='controlFire'; charcoalSound.currentTime = 0; charcoalSound.play().catch(() => {});
+                    hint6.style.opacity = '0'; info6.style.opacity = '0';
+                    thermoBar.style.display = 'block'; fireBtn.style.display = 'block'; fireHint.style.display = 'block';
                     startFireControl();
                 }
                 if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
                 if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
-            } else {
-                if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
-                if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
-            }
+            } else { if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%'); if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%'); }
             currentDrag=null;
         }
 
         [cageImg, leafImg2].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
         window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
         window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
-
         clickZone.addEventListener('click', ()=>{ if(state==='clickCage'){ bg73.style.opacity='0'; bg74.style.opacity='1'; leafImg2.style.display='block'; hint6.textContent='拖动茶叶至中央'; clickZone.style.display='none'; state='dragLeaf'; } });
         clickZone.addEventListener('touchend', e=>{ e.preventDefault(); clickZone.click(); });
 
-        let fireTemp = 70, safeTime = 0, lastTimestamp = 0, fireAnimFrame = null, fireFailed = false;
+        let fireTemp = 70, safeTime = 0, lastTimestamp = 0, fireAnimFrame = null;
         const SAFE_TARGET = 8000, TEMP_DECAY = 12, TEMP_ADD = 15;
 
-        function updateThermo() { thermoCover.style.height = (100 - fireTemp) + '%'; }
-        function addTemperature() { if (state !== 'controlFire' || fireFailed) return; fireTemp = Math.min(100, fireTemp + TEMP_ADD); updateThermo(); }
+        function updateThermo() { thermoLine.style.bottom = fireTemp + '%'; }
+        function addTemperature() { if (state !== 'controlFire') return; fireTemp = Math.min(100, fireTemp + TEMP_ADD); updateThermo(); }
 
         function startFireControl() {
-            fireTemp = 70; safeTime = 0; fireFailed = false; updateThermo();
+            fireTemp = 70; safeTime = 0; updateThermo();
             lastTimestamp = performance.now(); fireAnimFrame = requestAnimationFrame(fireLoop);
             fireBtn.addEventListener('click', addTemperature);
             fireBtn.addEventListener('touchend', (e) => { e.preventDefault(); addTemperature(); });
@@ -747,19 +571,14 @@
             if (!lastTimestamp) lastTimestamp = timestamp;
             const delta = (timestamp - lastTimestamp) / 1000;
             if (delta > 0) {
-                fireTemp = Math.max(0, fireTemp - TEMP_DECAY * delta);
-                updateThermo();
+                fireTemp = Math.max(0, fireTemp - TEMP_DECAY * delta); updateThermo();
                 if (fireTemp >= 67 && fireTemp <= 100) safeTime += delta * 1000;
-                if (fireTemp <= 0) {
-                    fireTemp = 70; safeTime = 0; updateThermo();
-                    thermoBar.style.borderColor = '#f00';
-                    setTimeout(() => { thermoBar.style.borderColor = '#8b6f4e'; }, 500);
-                }
+                if (fireTemp <= 0) { fireTemp = 70; safeTime = 0; updateThermo(); thermoBar.style.borderColor = '#f00'; setTimeout(() => { thermoBar.style.borderColor = '#8b6f4e'; }, 500); }
                 if (safeTime >= SAFE_TARGET) {
-                    state = 'done';
-                    cancelAnimationFrame(fireAnimFrame);
+                    state = 'done'; cancelAnimationFrame(fireAnimFrame);
                     thermoBar.style.display = 'none'; fireBtn.style.display = 'none'; fireHint.style.display = 'none';
-                    info6.classList.add('show');
+                    // 清除内联样式，显示介绍文字
+                    info6.style.opacity = '1'; info6.classList.add('show');
                     fireBtn.removeEventListener('click', addTemperature);
                     fireBtn.removeEventListener('touchend', addTemperature);
                     setTimeout(() => goToPage(7), 2500);
@@ -773,85 +592,29 @@
         resetDraggable(cageImg,'5%','8%'); resetDraggable(leafImg2,'5%','8%');
     }
 
-    // 泡茶页
     function initTea() {
         if (document.getElementById('gongdao').dataset.init) return;
-        document.getElementById('gongdao').dataset.init = '1';
-        const STATE = { INIT:0, LID_OPEN:1, TEA_ADDED:2, WATER_ADDED:3, LID_CLOSED:4, SOUP_READY:5, DONE:6 };
-        let currentState = STATE.INIT;
-        const gongdao = document.getElementById('gongdao'), gaiwan = document.getElementById('gaiwan'), gaiwanImg = document.getElementById('gaiwanImg');
-        const kettle = document.getElementById('kettle'), chaze = document.getElementById('chaze');
-        const guideText = document.getElementById('guideText7'), infoText = document.getElementById('infoText7');
-        const bg81 = document.getElementById('bg81'), bg90 = document.getElementById('bg90'), bg91 = document.getElementById('bg91'), bg81jpg = document.getElementById('bg81jpg');
-        const fogLayer = document.getElementById('fogLayer7'), scene = document.getElementById('mainScene');
-        let currentDrag = null, dragStartX, dragStartY, startLeftPct, startTopPct;
-        let cup1Filled = false, cup2Filled = false;
-
+        document.getElementById('gongdao').dataset.init = '1'; const STATE = { INIT:0, LID_OPEN:1, TEA_ADDED:2, WATER_ADDED:3, LID_CLOSED:4, SOUP_READY:5, DONE:6 }; let currentState = STATE.INIT;
+        const gongdao = document.getElementById('gongdao'), gaiwan = document.getElementById('gaiwan'), gaiwanImg = document.getElementById('gaiwanImg'); const kettle = document.getElementById('kettle'), chaze = document.getElementById('chaze');
+        const guideText = document.getElementById('guideText7'), infoText = document.getElementById('infoText7'); const bg81 = document.getElementById('bg81'), bg90 = document.getElementById('bg90'), bg91 = document.getElementById('bg91'), bg81jpg = document.getElementById('bg81jpg');
+        const fogLayer = document.getElementById('fogLayer7'), scene = document.getElementById('mainScene'); let currentDrag = null, dragStartX, dragStartY, startLeftPct, startTopPct; let cup1Filled = false, cup2Filled = false;
         function playPlaceSound() { placeSound.currentTime = 0; placeSound.play().catch(() => {}); }
-
         function setPos(elem, left, top) { elem.style.left=left+'%'; elem.style.top=top+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.transform='none'; }
         function getTarget(cxP, cyP, rP) { const r=scene.getBoundingClientRect(); return { x:r.width*(cxP/100), y:r.height*(cyP/100), rad:Math.min(r.width,r.height)*(rP/100) }; }
         const gaiwanTarget = () => getTarget(50,44,12), gongdaoTarget = () => getTarget(20,44,14), cup1Target = () => getTarget(12,62,12), cup2Target = () => getTarget(36,68,12);
         function isInTarget(elem, t) { const er=elem.getBoundingClientRect(), sr=scene.getBoundingClientRect(); return Math.hypot(er.left+er.width/2-sr.left - t.x, er.top+er.height/2-sr.top - t.y) <= t.rad; }
         function resetGongdao() { if(gongdao.src.includes('89.png')){ setPos(gongdao,6,39); gongdao.style.width='34%'; } else { setPos(gongdao,6,40); gongdao.style.width='28%'; } }
         function updateOutline() { gongdao.classList.remove('outline-hint'); gaiwan.classList.remove('outline-hint'); kettle.classList.remove('outline-hint'); chaze.classList.remove('outline-hint'); if(currentState===STATE.INIT) gaiwan.classList.add('outline-hint'); else if(currentState===STATE.LID_OPEN) chaze.classList.add('outline-hint'); else if(currentState===STATE.TEA_ADDED) kettle.classList.add('outline-hint'); else if(currentState===STATE.WATER_ADDED) gaiwan.classList.add('outline-hint'); else if(currentState===STATE.LID_CLOSED) gaiwan.classList.add('outline-hint'); else if(currentState===STATE.SOUP_READY) gongdao.classList.add('outline-hint'); }
-
         function onDragStart(e, elem) { if(currentState===STATE.DONE) return; if((elem===chaze&&currentState!==STATE.LID_OPEN)||(elem===kettle&&currentState!==STATE.TEA_ADDED)||(elem===gaiwan&&currentState!==STATE.LID_CLOSED)||(elem===gongdao&&currentState!==STATE.SOUP_READY)) return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.transform=(elem===gongdao&&gongdao.src.includes('89.png'))?'rotate(10deg)':'rotate(-10deg)'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
-        function onDragEnd() {
-            if(!currentDrag) return;
-            const elem=currentDrag; elem.style.cursor='grab'; elem.style.transform='none'; currentDrag=null;
-            if(elem===chaze&&isInTarget(elem, gaiwanTarget())){
-                gaiwanImg.src='./87.png'; chaze.style.display='none';
-                currentState=STATE.TEA_ADDED; guideText.textContent='拖动烧水壶注水'; updateOutline();
-                playPlaceSound();
-            } else if(elem===kettle&&isInTarget(elem, gaiwanTarget())){
-                gaiwanImg.src='./88.png'; kettle.style.display='none';
-                currentState=STATE.WATER_ADDED; guideText.textContent='点击盖碗，盖上盖子'; updateOutline();
-                playPlaceSound();
-            } else if(elem===gaiwan&&isInTarget(elem, gongdaoTarget())){
-                gongdao.src='./89.png'; gongdao.style.width='34%'; gaiwan.style.display='none';
-                currentState=STATE.SOUP_READY; guideText.textContent='拖动公道杯分茶'; updateOutline(); resetGongdao();
-                playPlaceSound();
-            } else if(elem===gongdao&&currentState===STATE.SOUP_READY){
-                if(!cup1Filled&&isInTarget(elem, cup1Target())){
-                    cup1Filled=true; bg90.style.opacity='1'; resetGongdao();
-                    playPlaceSound();
-                } else if(!cup2Filled&&isInTarget(elem, cup2Target())){
-                    cup2Filled=true; bg91.style.opacity='1'; resetGongdao();
-                    playPlaceSound();
-                } else { resetGongdao(); }
-                if(cup1Filled&&cup2Filled) finish();
-            }
-        }
-        function finish() {
-            currentState=STATE.DONE; bg81.style.opacity='0'; bg90.style.opacity='0'; bg91.style.opacity='0'; bg81jpg.style.opacity='1';
-            guideText.style.opacity='0'; infoText.classList.add('show');
-            [gongdao,gaiwan,kettle,chaze].forEach(el=>el.style.pointerEvents='none');
-            setTimeout(()=>{ goToPage(8); }, 2000);
-        }
-
+        function onDragEnd() { if(!currentDrag) return; const elem=currentDrag; elem.style.cursor='grab'; elem.style.transform='none'; currentDrag=null; if(elem===chaze&&isInTarget(elem, gaiwanTarget())){ gaiwanImg.src='./87.png'; chaze.style.display='none'; currentState=STATE.TEA_ADDED; guideText.textContent='拖动烧水壶注水'; updateOutline(); playPlaceSound(); } else if(elem===kettle&&isInTarget(elem, gaiwanTarget())){ gaiwanImg.src='./88.png'; kettle.style.display='none'; currentState=STATE.WATER_ADDED; guideText.textContent='点击盖碗，盖上盖子'; updateOutline(); playPlaceSound(); } else if(elem===gaiwan&&isInTarget(elem, gongdaoTarget())){ gongdao.src='./89.png'; gongdao.style.width='34%'; gaiwan.style.display='none'; currentState=STATE.SOUP_READY; guideText.textContent='拖动公道杯分茶'; updateOutline(); resetGongdao(); playPlaceSound(); } else if(elem===gongdao&&currentState===STATE.SOUP_READY){ if(!cup1Filled&&isInTarget(elem, cup1Target())){ cup1Filled=true; bg90.style.opacity='1'; resetGongdao(); playPlaceSound(); } else if(!cup2Filled&&isInTarget(elem, cup2Target())){ cup2Filled=true; bg91.style.opacity='1'; resetGongdao(); playPlaceSound(); } else { resetGongdao(); } if(cup1Filled&&cup2Filled) finish(); } }
+        function finish() { currentState=STATE.DONE; bg81.style.opacity='0'; bg90.style.opacity='0'; bg91.style.opacity='0'; bg81jpg.style.opacity='1'; guideText.style.opacity='0'; infoText.classList.add('show'); [gongdao,gaiwan,kettle,chaze].forEach(el=>el.style.pointerEvents='none'); setTimeout(()=>{ goToPage(8); }, 2000); }
         [gongdao,gaiwan,kettle,chaze].forEach(elem=>{ elem.addEventListener('mousedown', e=>onDragStart(e,elem)); elem.addEventListener('touchstart', e=>onDragStart(e,elem), {passive:false}); });
-        window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
-        window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
-        window.addEventListener('touchcancel', onDragEnd);
-
-        gaiwan.addEventListener('click', function(e) { if(currentState===STATE.INIT){ gaiwanImg.src='./86.png'; currentState=STATE.LID_OPEN; guideText.textContent='拖动茶则放入茶叶'; updateOutline(); e.stopPropagation(); } else if(currentState===STATE.WATER_ADDED){ gaiwanImg.src='./84.png'; currentState=STATE.LID_CLOSED; guideText.textContent='拖动盖碗出汤'; updateOutline(); e.stopPropagation(); } });
-        gaiwan.addEventListener('touchend', function(e) { if(currentState===STATE.INIT||currentState===STATE.WATER_ADDED){ e.preventDefault(); gaiwan.click(); } });
-        updateOutline();
+        window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false}); window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd); window.addEventListener('touchcancel', onDragEnd);
+        gaiwan.addEventListener('click', function(e) { if(currentState===STATE.INIT){ gaiwanImg.src='./86.png'; currentState=STATE.LID_OPEN; guideText.textContent='拖动茶则放入茶叶'; updateOutline(); e.stopPropagation(); } else if(currentState===STATE.WATER_ADDED){ gaiwanImg.src='./84.png'; currentState=STATE.LID_CLOSED; guideText.textContent='拖动盖碗出汤'; updateOutline(); e.stopPropagation(); } }); gaiwan.addEventListener('touchend', function(e) { if(currentState===STATE.INIT||currentState===STATE.WATER_ADDED){ e.preventDefault(); gaiwan.click(); } }); updateOutline();
     }
 
-    // 结束页
-    function initEnd() {
-        const scene = document.getElementById('page8');
-        const poemWrapper = document.getElementById('poemWrapper');
-        const restartBtn = document.getElementById('restartBtn');
-        let state = 0;
-        scene.addEventListener('click', () => { if (state === 0) { poemWrapper.classList.add('show'); state = 1; } else if (state === 1) { restartBtn.classList.add('show'); state = 2; } });
-        scene.addEventListener('touchend', (e) => { e.preventDefault(); scene.click(); });
-        restartBtn.addEventListener('click', (e) => { e.stopPropagation(); window.location.reload(); });
-        restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); restartBtn.click(); });
-    }
+    function initEnd() { const scene = document.getElementById('page8'); const poemWrapper = document.getElementById('poemWrapper'); const restartBtn = document.getElementById('restartBtn'); let state = 0; scene.addEventListener('click', () => { if (state === 0) { poemWrapper.classList.add('show'); state = 1; } else if (state === 1) { restartBtn.classList.add('show'); state = 2; } }); scene.addEventListener('touchend', (e) => { e.preventDefault(); scene.click(); }); restartBtn.addEventListener('click', (e) => { e.stopPropagation(); window.location.reload(); }); restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); restartBtn.click(); }); }
 
     const imgs = ['11.png','21.png','22.png','31.png','32.png','41.jpg','42.png','51.png','52.png','53.png','61.png','62.png','71.jpg','72.jpg','73.jpg','74.png','75.jpg','76.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png','90.png','91.png','81.jpg','91.jpg'];
     imgs.forEach(s => { const img = new Image(); img.src = './' + s; img.onerror = () => console.warn('图片缺失：' + s); });
