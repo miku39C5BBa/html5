@@ -235,6 +235,49 @@
         }
         .restart-btn.show { opacity: 1; pointer-events: auto; }
         .restart-btn:active { text-shadow: 0 0 10px rgba(255,255,255,1), 0 0 3px rgba(0,0,0,0.3); }
+
+        /* 炭焙控火极窄温度条 */
+        .thermo-bar {
+            position: absolute;
+            right: 3%;
+            bottom: 25%;
+            width: 4px;
+            height: 40%;
+            background: linear-gradient(to top, #38b, #f80);
+            border-radius: 2px;
+            z-index: 20;
+            overflow: hidden;
+            border: 1px solid rgba(180,160,130,0.5);
+        }
+        .thermo-fill-cover {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #3a2e1e;
+            transition: height 0.2s ease;
+        }
+        .fire-btn {
+            position: absolute;
+            bottom: 6%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20%;
+            height: 16%;
+            background: transparent;
+            z-index: 20;
+            cursor: pointer;
+        }
+        .fire-hint {
+            position: absolute;
+            top: 15%;
+            left: 10%;
+            right: 10%;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            text-shadow: var(--white-stroke);
+            z-index: 21;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -304,7 +347,7 @@
         <div class="info-box" id="info5" style="top:13%;"><strong>揉捻</strong>揉捻使叶细胞破碎，茶汁溢出，条索紧结成形。</div>
     </div>
 
-    <!-- 炭焙页 -->
+    <!-- 炭焙页 (新控火UI) -->
     <div class="page" id="page6">
         <div class="bg-full" style="background-image:url('./71.jpg'); z-index:1;" id="bg71"></div>
         <div class="bg-full" style="background-image:url('./73.jpg'); z-index:2; opacity:0;" id="bg73"></div>
@@ -315,6 +358,13 @@
         <div class="click-zone" id="clickZone" style="position:absolute; left:35%; top:55%; width:30%; height:25%; z-index:20; cursor:pointer; background:transparent; display:none; border-radius:50%;"></div>
         <div class="hint-top" id="hint6" style="top:15%;">拖动焙笼至中央</div>
         <div class="info-box" id="info6" style="top:13%;"><strong>炭焙</strong>通过炭火的穿透性加热，让茶叶进行转化，形成品质优异并稳定的好茶。</div>
+
+        <!-- 极窄温度条 -->
+        <div class="thermo-bar" id="thermoBar" style="display:none;">
+            <div class="thermo-fill-cover" id="thermoCover"></div>
+        </div>
+        <div class="fire-btn" id="fireBtn" style="display:none;"></div>
+        <div class="fire-hint" id="fireHint" style="display:none;">点击底部控火，保持高温</div>
     </div>
 
     <!-- 泡茶页 -->
@@ -350,7 +400,7 @@
     // 音频资源
     const pickSound = new Audio('./1.mp3');
     pickSound.preload = 'auto';
-    pickSound.volume = 1.0;           // 采茶音效调至最大
+    pickSound.volume = 1.0;
     const shakeBgSound = new Audio('./3.mp3');
     shakeBgSound.loop = true;
     shakeBgSound.preload = 'auto';
@@ -360,7 +410,7 @@
     placeSound.preload = 'auto';
     const bgm = new Audio('./music.mp3');
     bgm.loop = true;
-    bgm.volume = 0.6;                 // 背景音乐60%
+    bgm.volume = 0.6;
 
     let shakeAudioPlaying = false;
     let shakeTargetVolume = 0;
@@ -568,97 +618,32 @@
 
         const SHAKE_DIST = 1200, MAX_MOVE_PAN = 12; let offX=0, offY=0, totalDist=0, lastOX=0, lastOY=0, shakeDone=false; let isShakeDrag=false, shakeDragSX, shakeDragSY, shakeDragBX, shakeDragBY;
         function initShakePan() {
-            window.addEventListener('deviceorientation', gyroPan);
-            teaLeaf.addEventListener('mousedown', onShakeDragStart);
-            teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false});
-            window.addEventListener('mousemove', onShakeDragMove);
-            window.addEventListener('touchmove', onShakeDragMove, {passive:false});
-            window.addEventListener('mouseup', onShakeDragEnd);
-            window.addEventListener('touchend', onShakeDragEnd);
-            stopShakeSound(true);
-            shakeAudioPlaying = false;
-            shakeCurrentVolume = 0;
-            shakeTargetVolume = 0;
-            requestAnimationFrame(shakeLoop);
+            window.addEventListener('deviceorientation', gyroPan); teaLeaf.addEventListener('mousedown', onShakeDragStart); teaLeaf.addEventListener('touchstart', onShakeDragStart, {passive:false});
+            window.addEventListener('mousemove', onShakeDragMove); window.addEventListener('touchmove', onShakeDragMove, {passive:false});
+            window.addEventListener('mouseup', onShakeDragEnd); window.addEventListener('touchend', onShakeDragEnd);
+            stopShakeSound(true); shakeAudioPlaying = false; shakeCurrentVolume = 0; shakeTargetVolume = 0; requestAnimationFrame(shakeLoop);
         }
-        function gyroPan(e) {
-            if (shakeDone || isShakeDrag) return;
-            if (e.beta!=null && e.gamma!=null) {
-                const g = Math.max(-45,Math.min(45,e.gamma))/45, b = Math.max(-45,Math.min(45,e.beta))/45;
-                offX = g*MAX_MOVE_PAN; offY = b*MAX_MOVE_PAN;
-                updateLeaf();
-            }
-        }
+        function gyroPan(e) { if (shakeDone || isShakeDrag) return; if (e.beta!=null && e.gamma!=null) { const g = Math.max(-45,Math.min(45,e.gamma))/45, b = Math.max(-45,Math.min(45,e.beta))/45; offX = g*MAX_MOVE_PAN; offY = b*MAX_MOVE_PAN; updateLeaf(); } }
         function updateLeaf() { teaLeaf.style.transform = `translate(-50%, -50%) translate(${offX}px, ${offY}px)`; }
-        function onShakeDragStart(e) {
-            if (shakeDone) return;
-            e.preventDefault();
-            isShakeDrag = true;
-            const p = e.touches ? e.touches[0] : e;
-            shakeDragSX = p.clientX; shakeDragSY = p.clientY;
-            shakeDragBX = offX; shakeDragBY = offY;
-        }
-        function onShakeDragMove(e) {
-            if (!isShakeDrag || shakeDone) return;
-            e.preventDefault();
-            const p = e.touches ? e.touches[0] : e;
-            offX = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX+(p.clientX-shakeDragSX)));
-            offY = Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY+(p.clientY-shakeDragSY)));
-            updateLeaf();
-        }
+        function onShakeDragStart(e) { if (shakeDone) return; e.preventDefault(); isShakeDrag=true; const p=e.touches?e.touches[0]:e; shakeDragSX=p.clientX; shakeDragSY=p.clientY; shakeDragBX=offX; shakeDragBY=offY; }
+        function onShakeDragMove(e) { if (!isShakeDrag || shakeDone) return; e.preventDefault(); const p=e.touches?e.touches[0]:e; offX=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBX+(p.clientX-shakeDragSX))); offY=Math.min(MAX_MOVE_PAN, Math.max(-MAX_MOVE_PAN, shakeDragBY+(p.clientY-shakeDragSY))); updateLeaf(); }
         function onShakeDragEnd() { isShakeDrag = false; }
 
         function shakeLoop() {
             if (shakeDone) return;
             const dx = offX - lastOX, dy = offY - lastOY, moved = Math.sqrt(dx*dx+dy*dy);
-            totalDist += moved;
-            lastOX = offX; lastOY = offY;
-
+            totalDist += moved; lastOX = offX; lastOY = offY;
             const isMoving = moved > 0.5 || isShakeDrag;
-            if (isMoving) {
-                shakeTargetVolume = 1;
-                if (!shakeAudioPlaying) {
-                    shakeBgSound.volume = 0;
-                    shakeBgSound.play().then(() => { shakeAudioPlaying = true; }).catch(() => {});
-                }
-            } else {
-                shakeTargetVolume = 0;
-            }
-
-            if (shakeAudioPlaying) {
-                if (shakeTargetVolume === 1 && shakeCurrentVolume < 1) {
-                    shakeCurrentVolume = Math.min(1, shakeCurrentVolume + 0.05);
-                    shakeBgSound.volume = shakeCurrentVolume;
-                } else if (shakeTargetVolume === 0 && shakeCurrentVolume > 0) {
-                    shakeCurrentVolume = Math.max(0, shakeCurrentVolume - 0.02);
-                    shakeBgSound.volume = shakeCurrentVolume;
-                    if (shakeCurrentVolume <= 0.01) {
-                        shakeBgSound.pause();
-                        shakeAudioPlaying = false;
-                        shakeCurrentVolume = 0;
-                    }
-                }
-            }
-
-            if (totalDist >= SHAKE_DIST) {
-                shakeDone = true;
-                hint4.style.opacity = '0';
-                info4.classList.add('show');
-                teaLeaf.style.pointerEvents = 'none';
-                window.removeEventListener('deviceorientation', gyroPan);
-                stopShakeSound();
-                setTimeout(() => goToPage(5), 2800);
-            } else {
-                requestAnimationFrame(shakeLoop);
-            }
+            if (isMoving) { shakeTargetVolume = 1; if (!shakeAudioPlaying) { shakeBgSound.volume=0; shakeBgSound.play().then(()=>{shakeAudioPlaying=true;}).catch(()=>{}); } }
+            else { shakeTargetVolume = 0; }
+            if (shakeAudioPlaying) { if (shakeTargetVolume===1 && shakeCurrentVolume<1) { shakeCurrentVolume=Math.min(1,shakeCurrentVolume+0.05); shakeBgSound.volume=shakeCurrentVolume; } else if (shakeTargetVolume===0 && shakeCurrentVolume>0) { shakeCurrentVolume=Math.max(0,shakeCurrentVolume-0.02); shakeBgSound.volume=shakeCurrentVolume; if(shakeCurrentVolume<=0.01){shakeBgSound.pause();shakeAudioPlaying=false;shakeCurrentVolume=0;} } }
+            if (totalDist >= SHAKE_DIST) { shakeDone=true; hint4.style.opacity='0'; info4.classList.add('show'); teaLeaf.style.pointerEvents='none'; window.removeEventListener('deviceorientation', gyroPan); stopShakeSound(); setTimeout(() => goToPage(5), 2800); }
+            else { requestAnimationFrame(shakeLoop); }
         }
 
-        teaLeaf.addEventListener('mousedown', onDragStart);
-        teaLeaf.addEventListener('touchstart', onDragStart, {passive:false});
-        window.addEventListener('mousemove', onDragMove);
-        window.addEventListener('touchmove', onDragMove, {passive:false});
-        window.addEventListener('mouseup', onDragEnd);
-        window.addEventListener('touchend', onDragEnd);
+        teaLeaf.addEventListener('mousedown', onDragStart); teaLeaf.addEventListener('touchstart', onDragStart, {passive:false});
+        window.addEventListener('mousemove', onDragMove); window.addEventListener('touchmove', onDragMove, {passive:false});
+        window.addEventListener('mouseup', onDragEnd); window.addEventListener('touchend', onDragEnd);
         resetLeaf();
     }
 
@@ -690,7 +675,7 @@
         kneadZone.addEventListener('touchstart', onDown, {passive:false}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onUp);
     }
 
-    // 炭焙页
+    // 炭焙页（新控火）
     function initBake() {
         if (document.getElementById('cageImg').dataset.init) return;
         document.getElementById('cageImg').dataset.init = '1';
@@ -698,13 +683,15 @@
         const cageImg = document.getElementById('cageImg'), leafImg2 = document.getElementById('leafImg2');
         const bg71 = document.getElementById('bg71'), bg73 = document.getElementById('bg73'), bg74 = document.getElementById('bg74'), bg76 = document.getElementById('bg76');
         const clickZone = document.getElementById('clickZone'), hint6 = document.getElementById('hint6'), info6 = document.getElementById('info6');
+        const thermoBar = document.getElementById('thermoBar'), thermoCover = document.getElementById('thermoCover');
+        const fireBtn = document.getElementById('fireBtn'), fireHint = document.getElementById('fireHint');
 
         let state = 'dragCage'; let currentDrag = null; let dragStartX, dragStartY, startLeftPct, startTopPct;
         function resetDraggable(elem, right, bottom) { elem.style.left='auto'; elem.style.top='auto'; elem.style.right=right; elem.style.bottom=bottom; elem.style.transform='none'; }
         function getTarget() { const r=scene.getBoundingClientRect(); return { x:r.width/2, y:r.height*0.65, rad:Math.min(r.width,r.height)*0.18 }; }
         function isInTarget(elem) { const t=getTarget(), er=elem.getBoundingClientRect(), sr=scene.getBoundingClientRect(); return Math.hypot(er.left+er.width/2-sr.left - t.x, er.top+er.height/2-sr.top - t.y) <= t.rad; }
 
-        function onDragStart(e, elem) { if(state==='done') return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.left=startLeftPct+'%'; elem.style.top=startTopPct+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.cursor='grabbing'; }
+        function onDragStart(e, elem) { if(state==='done'||state==='controlFire') return; e.preventDefault(); currentDrag=elem; const p=e.touches?e.touches[0]:e; dragStartX=p.clientX; dragStartY=p.clientY; const sr=scene.getBoundingClientRect(), er=elem.getBoundingClientRect(); startLeftPct=((er.left-sr.left)/sr.width)*100; startTopPct=((er.top-sr.top)/sr.height)*100; elem.style.left=startLeftPct+'%'; elem.style.top=startTopPct+'%'; elem.style.right='auto'; elem.style.bottom='auto'; elem.style.cursor='grabbing'; }
         function onDragMove(e) { if(!currentDrag) return; e.preventDefault(); const p=e.touches?e.touches[0]:e, sr=scene.getBoundingClientRect(); currentDrag.style.left = (startLeftPct + ((p.clientX-dragStartX)/sr.width)*100) + '%'; currentDrag.style.top = (startTopPct + ((p.clientY-dragStartY)/sr.height)*100) + '%'; }
         function onDragEnd() {
             if(!currentDrag) return;
@@ -716,11 +703,15 @@
                     state='clickCage';
                 } else if(currentDrag===leafImg2&&state==='dragLeaf'){
                     leafImg2.style.display='none'; bg74.style.opacity='0'; bg76.style.opacity='1';
-                    hint6.style.opacity='0'; info6.classList.add('show');
-                    state='done';
+                    state='controlFire';
                     charcoalSound.currentTime = 0;
                     charcoalSound.play().catch(() => {});
-                    setTimeout(()=>goToPage(7),2500);
+                    hint6.style.opacity = '0';
+                    info6.style.opacity = '0';
+                    thermoBar.style.display = 'block';
+                    fireBtn.style.display = 'block';
+                    fireHint.style.display = 'block';
+                    startFireControl();
                 }
                 if(currentDrag===cageImg) resetDraggable(cageImg,'5%','8%');
                 if(currentDrag===leafImg2) resetDraggable(leafImg2,'5%','8%');
@@ -737,6 +728,47 @@
 
         clickZone.addEventListener('click', ()=>{ if(state==='clickCage'){ bg73.style.opacity='0'; bg74.style.opacity='1'; leafImg2.style.display='block'; hint6.textContent='拖动茶叶至中央'; clickZone.style.display='none'; state='dragLeaf'; } });
         clickZone.addEventListener('touchend', e=>{ e.preventDefault(); clickZone.click(); });
+
+        let fireTemp = 70, safeTime = 0, lastTimestamp = 0, fireAnimFrame = null, fireFailed = false;
+        const SAFE_TARGET = 8000, TEMP_DECAY = 12, TEMP_ADD = 15;
+
+        function updateThermo() { thermoCover.style.height = (100 - fireTemp) + '%'; }
+        function addTemperature() { if (state !== 'controlFire' || fireFailed) return; fireTemp = Math.min(100, fireTemp + TEMP_ADD); updateThermo(); }
+
+        function startFireControl() {
+            fireTemp = 70; safeTime = 0; fireFailed = false; updateThermo();
+            lastTimestamp = performance.now(); fireAnimFrame = requestAnimationFrame(fireLoop);
+            fireBtn.addEventListener('click', addTemperature);
+            fireBtn.addEventListener('touchend', (e) => { e.preventDefault(); addTemperature(); });
+        }
+
+        function fireLoop(timestamp) {
+            if (state !== 'controlFire') { cancelAnimationFrame(fireAnimFrame); return; }
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const delta = (timestamp - lastTimestamp) / 1000;
+            if (delta > 0) {
+                fireTemp = Math.max(0, fireTemp - TEMP_DECAY * delta);
+                updateThermo();
+                if (fireTemp >= 67 && fireTemp <= 100) safeTime += delta * 1000;
+                if (fireTemp <= 0) {
+                    fireTemp = 70; safeTime = 0; updateThermo();
+                    thermoBar.style.borderColor = '#f00';
+                    setTimeout(() => { thermoBar.style.borderColor = '#8b6f4e'; }, 500);
+                }
+                if (safeTime >= SAFE_TARGET) {
+                    state = 'done';
+                    cancelAnimationFrame(fireAnimFrame);
+                    thermoBar.style.display = 'none'; fireBtn.style.display = 'none'; fireHint.style.display = 'none';
+                    info6.classList.add('show');
+                    fireBtn.removeEventListener('click', addTemperature);
+                    fireBtn.removeEventListener('touchend', addTemperature);
+                    setTimeout(() => goToPage(7), 2500);
+                    return;
+                }
+            }
+            lastTimestamp = timestamp;
+            fireAnimFrame = requestAnimationFrame(fireLoop);
+        }
 
         resetDraggable(cageImg,'5%','8%'); resetDraggable(leafImg2,'5%','8%');
     }
@@ -815,16 +847,12 @@
         const poemWrapper = document.getElementById('poemWrapper');
         const restartBtn = document.getElementById('restartBtn');
         let state = 0;
-        scene.addEventListener('click', () => {
-            if (state === 0) { poemWrapper.classList.add('show'); state = 1; }
-            else if (state === 1) { restartBtn.classList.add('show'); state = 2; }
-        });
+        scene.addEventListener('click', () => { if (state === 0) { poemWrapper.classList.add('show'); state = 1; } else if (state === 1) { restartBtn.classList.add('show'); state = 2; } });
         scene.addEventListener('touchend', (e) => { e.preventDefault(); scene.click(); });
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); window.location.reload(); });
         restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); restartBtn.click(); });
     }
 
-    // 图片容错
     const imgs = ['11.png','21.png','22.png','31.png','32.png','41.jpg','42.png','51.png','52.png','53.png','61.png','62.png','71.jpg','72.jpg','73.jpg','74.png','75.jpg','76.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png','90.png','91.png','81.jpg','91.jpg'];
     imgs.forEach(s => { const img = new Image(); img.src = './' + s; img.onerror = () => console.warn('图片缺失：' + s); });
 })();
